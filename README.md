@@ -1,4 +1,4 @@
-# AgileProject
+# EsportLeague
 
 A basic Agile project template.
 
