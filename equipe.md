@@ -1,4 +1,4 @@
-Nom d'équipes : les trolleurs
+Nom d'équipes : les debiles
 Membres :
 	Thibault
 	Léo
