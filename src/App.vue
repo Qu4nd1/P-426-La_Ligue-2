@@ -3,9 +3,9 @@
 // L'application est vide : votre travail de sprint commence dans <main>.
 // Tout ce que vous ajoutez ici est VOTRE version du produit (option A : 3 équipes, 3 versions).
 import { ref } from 'vue';
-
+import AdminCreerTournoi from './components/AdminCreerTournoi.vue';
 // Nom de l'équipe — à remplacer par le vôtre.
-const equipe = ref('équipe 1');
+const equipe = ref('équipe 2');
 
 // État du sprint — à tenir à jour, c'est ce qui se voit en revue.
 const sprint = ref(1);
@@ -28,6 +28,7 @@ const sprintGoal = ref('à écrire par le Product Owner');
          Ordre imposé par le client : les user stories du sprint.
          Un écran = un composant dans src/components/, importé ici. -->
     <p class="vide">Aucun écran pour l'instant. Commencez par la première user story du sprint.</p>
+    <AdminCreerTournoi />
   </main>
 
   <footer>
