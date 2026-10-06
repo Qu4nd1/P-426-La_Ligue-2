@@ -1,7 +1,7 @@
 import { reactive } from "vue";
 
 export const connectedUser = reactive({
-	username: "",
-	role: "",
-	connected: false,
+  username: "",
+  role: "",
+  connected: false,
 });

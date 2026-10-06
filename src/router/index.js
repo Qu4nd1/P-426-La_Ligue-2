@@ -3,19 +3,19 @@ import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/login.vue";
 
 const router = createRouter({
-	history: createWebHistory(),
-	routes: [
-		{
-			path: "/",
-			name: "home",
-			component: HomeView,
-		},
-		{
-			path: "/login",
-			name: "login",
-			component: LoginView,
-		},
-	],
+  history: createWebHistory(),
+  routes: [
+    {
+      path: "/",
+      name: "home",
+      component: HomeView,
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: LoginView,
+    },
+  ],
 });
 
 export default router;
