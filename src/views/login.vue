@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
-import { verifyUser } from "../../services/userAuth";
+import { verifyUser } from "../services/userAuth";
 
 // Login personne
 const user = reactive({
@@ -81,7 +81,7 @@ onMounted(() => {
 		</div>
 	</body>
 </template>
-<style>
+<style scoped>
 * {
 	margin: 0;
 	padding: 0;
@@ -97,8 +97,7 @@ body {
 	flex-direction: column;
 	height: 100vh;
 }
-</style>
-<style scoped>
+
 .container {
 	background-color: #fff;
 	border-radius: 30px;
