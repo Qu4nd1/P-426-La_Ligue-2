@@ -1,22 +1,26 @@
 {
-  "name": "la-ligue",
+  "name": "test",
+  "version": "0.0.0",
   "private": true,
-  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
-    "prettier": "^3.9.9",
-    "vue": "^3.5.13"
+    "check-update": "^0.0.8",
+    "vue": "^3.5.42",
+    "vue-router": "^5.3.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.1",
-    "vite": "^6.0.7"
+    "@vitejs/plugin-vue": "^6.0.8",
+    "prettier": "3.9.6",
+    "vite": "^8.2.2",
+    "vite-plugin-vue-devtools": "^8.2.1"
   },
-  "allowScripts": {
-    "prettier@3.9.9": true
+  "engines": {
+    "node": "^22.18.0 || >=24.12.0"
   }
 }
