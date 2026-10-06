@@ -1,6 +1,24 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, reactive } from "vue";
+import { verifyUser } from "../../services/userAuth";
 
+// Login personne
+const user = reactive({
+	email: "",
+	pwd: "",
+});
+
+const login = async () => {
+	const result = await verifyUser(user);
+
+	if (result) {
+		console.log("Connexion réussie :", result);
+	} else {
+		console.log("Email ou mot de passe incorrect");
+	}
+};
+
+// Animation du texte
 const text = "Hello Friend !";
 const displayedText = ref("");
 let index = 0;
@@ -34,7 +52,7 @@ onMounted(() => {
 	<body>
 		<div class="container">
 			<div class="sign-in">
-				<form>
+				<form @submit.prevent="login">
 					<div class="typing">
 						<h1>{{ displayedText }}</h1>
 					</div>
@@ -45,8 +63,18 @@ onMounted(() => {
 						<a href="#" class="icon"><i class="fa-brands fa-discord"></i></a>
 					</div>
 					<span>or log in with your Email</span>
-					<input type="email" id="email" placeholder="Email" />
-					<input type="password" id="password" placeholder="Password" />
+					<input
+						type="email"
+						id="email"
+						placeholder="Email"
+						v-model="user.email"
+					/>
+					<input
+						type="password"
+						id="password"
+						placeholder="Password"
+						v-model="user.pwd"
+					/>
 					<button>Sign In</button>
 				</form>
 			</div>
@@ -88,7 +116,7 @@ body {
 }
 
 .container a {
-	color: #333;
+	color: #000000;
 	font-size: 13px;
 	text-decoration: none;
 	margin: 15px 0 10px;
