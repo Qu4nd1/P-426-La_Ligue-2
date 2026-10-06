@@ -1,6 +1,10 @@
 <script setup>
 import { ref, onMounted, reactive } from "vue";
 import { verifyUser } from "../services/userAuth";
+import { connectedUser } from "../stores/userStore";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 // Login personne
 const user = reactive({
@@ -12,7 +16,13 @@ const login = async () => {
 	const result = await verifyUser(user);
 
 	if (result) {
-		console.log("Connexion réussie :", result);
+		connectedUser.username = result.username;
+		connectedUser.role = result.role;
+		connectedUser.connected = true;
+
+		console.log("Connecté :", connectedUser);
+
+		router.push({ name: "home" });
 	} else {
 		console.log("Email ou mot de passe incorrect");
 	}
@@ -75,7 +85,7 @@ onMounted(() => {
 						placeholder="Password"
 						v-model="user.pwd"
 					/>
-					<button>Sign In</button>
+					<button type="submit">Sign In</button>
 				</form>
 			</div>
 		</div>

@@ -1,8 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
+import { connectedUser } from "../stores/userStore";
 
 const equipe = ref("Équipe 1");
 const sprint = ref(1);
@@ -24,9 +22,16 @@ const sprint = ref(1);
 				<a href="#tournois">Tournois</a>
 				<a href="#fonctionnement">Fonctionnement</a>
 				<a href="#classement">Classement</a>
-				<RouterLink :to="{ name: 'login' }" class="login-button">
+				<RouterLink
+					:to="{ name: 'login' }"
+					class="login-button"
+					v-if="!connectedUser.connected"
+				>
 					Connexion
 				</RouterLink>
+				<button class="login-button" v-else>
+					{{ connectedUser.username }}
+				</button>
 			</nav>
 		</header>
 
@@ -46,10 +51,12 @@ const sprint = ref(1);
 					</p>
 
 					<div class="hero-actions">
-						<button class="primary-button">
-							Rejoindre La Ligue
-							<span>→</span>
-						</button>
+						<RouterLink :to="{ name: 'login' }"
+							><button class="primary-button">
+								Rejoindre La Ligue
+								<span>→</span>
+							</button></RouterLink
+						>
 
 						<a href="#tournois" class="secondary-button"> Voir les tournois </a>
 					</div>
