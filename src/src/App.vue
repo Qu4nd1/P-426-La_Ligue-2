@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, RouterLink} from "vue-router";
 
 const router = useRouter();
 
@@ -26,6 +26,7 @@ const goToLogin = () => {
 
 			<nav>
 				<a href="#tournois">Tournois</a>
+				<RouterLink :to="{name: 'tournament-creation'}">Créer un tournoi</RouterLink>
 				<a href="#fonctionnement">Fonctionnement</a>
 				<a href="#classement">Classement</a>
 
