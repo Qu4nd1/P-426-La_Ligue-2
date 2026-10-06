@@ -57,12 +57,12 @@ onMounted(() => {
 						<h1>{{ displayedText }}</h1>
 					</div>
 					<div class="social-icons">
-						<a href="#" class="icon"><i class="fa-brands fa-google"></i></a>
+						<!-- <a href="#" class="icon"><i class="fa-brands fa-google"></i></a>
 						<a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
 						<a href="#" class="icon"><i class="fa-brands fa-facebook"></i></a>
-						<a href="#" class="icon"><i class="fa-brands fa-discord"></i></a>
+						<a href="#" class="icon"><i class="fa-brands fa-discord"></i></a> -->
 					</div>
-					<span>or log in with your Email</span>
+					<!-- <span>or log in with your Email</span> -->
 					<input
 						type="email"
 						id="email"
@@ -96,7 +96,6 @@ body {
 	justify-content: center;
 	flex-direction: column;
 	height: 100vh;
-	width: 1900px;
 }
 </style>
 <style scoped>
