@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
-import { connectedUser } from "../stores/userStore";
+import Header from "../components/Header.vue";
+import Footer from "../components/Footer.vue";
 
 const equipe = ref("Équipe 1");
 const sprint = ref(1);
@@ -8,32 +9,7 @@ const sprint = ref(1);
 
 <template>
 	<div class="home">
-		<header class="navbar">
-			<div class="brand">
-				<div class="logo">L</div>
-
-				<div>
-					<h1>La Ligue</h1>
-					<span>Esport Platform</span>
-				</div>
-			</div>
-
-			<nav>
-				<a href="#tournois">Tournois</a>
-				<a href="#fonctionnement">Fonctionnement</a>
-				<a href="#classement">Classement</a>
-				<RouterLink
-					:to="{ name: 'login' }"
-					class="login-button"
-					v-if="!connectedUser.connected"
-				>
-					Connexion
-				</RouterLink>
-				<button class="login-button" v-else>
-					{{ connectedUser.username }}
-				</button>
-			</nav>
-		</header>
+		<Header/>
 
 		<main>
 			<section class="hero">
@@ -176,20 +152,7 @@ const sprint = ref(1);
 				</div>
 			</section>
 		</main>
-
-		<footer>
-			<div class="footer-brand">
-				<div class="logo small">L</div>
-				<strong>La Ligue</strong>
-			</div>
-
-			<p>
-				Projet scolaire — les pronostics sont un jeu à
-				<strong>points</strong> : aucun argent réel.
-			</p>
-
-			<span>© 2026 La Ligue</span>
-		</footer>
+		<Footer/>
 	</div>
 </template>
 
@@ -213,97 +176,6 @@ const sprint = ref(1);
 	color: #f8fafc;
 	font-family: "Ubuntu";
 }
-
-/* NAVBAR */
-
-.navbar {
-	width: 100%;
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 24px 32px;
-
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.brand {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-}
-
-.logo {
-	width: 44px;
-	height: 44px;
-
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
-	border-radius: 12px;
-
-	background: linear-gradient(135deg, #22d3ee, #6366f1);
-
-	font-size: 22px;
-	font-weight: 800;
-}
-
-.logo.small {
-	width: 32px;
-	height: 32px;
-	font-size: 16px;
-	border-radius: 8px;
-}
-
-.brand h1 {
-	margin: 0;
-	font-size: 18px;
-}
-
-.brand span {
-	color: #64748b;
-	font-size: 11px;
-	text-transform: uppercase;
-	letter-spacing: 1.5px;
-}
-
-nav {
-	display: flex;
-	align-items: center;
-	gap: 32px;
-}
-
-nav a {
-	color: #94a3b8;
-	text-decoration: none;
-	font-size: 14px;
-	transition: 0.2s;
-}
-
-nav a:hover {
-	color: white;
-}
-
-.login-button {
-	padding: 10px 20px;
-
-	border: 1px solid #334155;
-	border-radius: 10px;
-
-	background: rgba(255, 255, 255, 0.04);
-	color: white;
-
-	cursor: pointer;
-
-	transition: 0.2s;
-}
-
-.login-button:hover {
-	background: white;
-	color: #080d18;
-}
-
 /* HERO */
 
 .hero {
@@ -769,45 +641,11 @@ nav a:hover {
 
 /* FOOTER */
 
-footer {
-	max-width: 1200px;
 
-	margin: auto;
-	padding: 35px 32px;
-
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-
-	color: #475569;
-
-	font-size: 12px;
-}
-
-.footer-brand {
-	display: flex;
-	align-items: center;
-
-	gap: 10px;
-
-	color: #94a3b8;
-}
-
-footer p {
-	margin: 0;
-}
-
-footer strong {
-	color: #94a3b8;
-}
 
 /* RESPONSIVE */
 
 @media (max-width: 900px) {
-	nav a {
-		display: none;
-	}
-
 	.hero {
 		grid-template-columns: 1fr;
 
@@ -830,14 +668,6 @@ footer strong {
 }
 
 @media (max-width: 600px) {
-	.navbar {
-		padding: 20px;
-	}
-
-	.brand span {
-		display: none;
-	}
-
 	.hero {
 		padding: 50px 20px 80px;
 	}
@@ -857,16 +687,6 @@ footer strong {
 
 	.features {
 		padding: 70px 20px;
-	}
-
-	footer {
-		padding: 30px 20px;
-
-		flex-direction: column;
-
-		gap: 15px;
-
-		text-align: center;
 	}
 }
 </style>
