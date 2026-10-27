@@ -1,10 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const nom = ref('')
-const jeu = ref('')
-const date = ref('')
-const nbEquipes = ref(8)
+const nom = ref("");
+const jeu = ref("");
+const date = ref("");
+const nbEquipes = ref(8);
 
 function creer() {
   const tournoi = {
@@ -12,8 +12,8 @@ function creer() {
     jeu: jeu.value,
     date: date.value,
     nbEquipes: nbEquipes.value,
-  }
-  console.log('Tournoi créé :', tournoi)
+  };
+  console.log("Tournoi créé :", tournoi);
 }
 </script>
 <template>

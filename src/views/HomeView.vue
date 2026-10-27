@@ -8,685 +8,683 @@ const sprint = ref(1);
 </script>
 
 <template>
-	<div class="home">
-		<Header/>
+  <div class="home">
+    <Header />
 
-		<main>
-			<section class="hero">
-				<div class="hero-content">
-					<div class="badge">Sprint {{ sprint }} · {{ equipe }}</div>
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <div class="badge">Sprint {{ sprint }} · {{ equipe }}</div>
 
-					<h2>
-						Entrez dans
-						<span>La Ligue</span>
-					</h2>
+          <h2>
+            Entrez dans
+            <span>La Ligue</span>
+          </h2>
 
-					<p class="hero-description">
-						Participez à des tournois esport, soutenez vos équipes favorites et
-						tentez de grimper au sommet du classement grâce à vos pronostics.
-					</p>
+          <p class="hero-description">
+            Participez à des tournois esport, soutenez vos équipes favorites et
+            tentez de grimper au sommet du classement grâce à vos pronostics.
+          </p>
 
-					<div class="hero-actions">
-						<RouterLink :to="{ name: 'login' }"
-							><button class="primary-button">
-								Rejoindre La Ligue
-								<span>→</span>
-							</button></RouterLink
-						>
+          <div class="hero-actions">
+            <RouterLink :to="{ name: 'login' }"
+              ><button class="primary-button">
+                Rejoindre La Ligue
+                <span>→</span>
+              </button></RouterLink
+            >
 
-						<a href="#tournois" class="secondary-button"> Voir les tournois </a>
-					</div>
+            <a href="#tournois" class="secondary-button"> Voir les tournois </a>
+          </div>
 
-					<div class="stats">
-						<div class="stat">
-							<strong>3</strong>
-							<span>Équipes</span>
-						</div>
+          <div class="stats">
+            <div class="stat">
+              <strong>3</strong>
+              <span>Équipes</span>
+            </div>
 
-						<div class="separator"></div>
+            <div class="separator"></div>
 
-						<div class="stat">
-							<strong>100%</strong>
-							<span>Esport</span>
-						</div>
+            <div class="stat">
+              <strong>100%</strong>
+              <span>Esport</span>
+            </div>
 
-						<div class="separator"></div>
+            <div class="separator"></div>
 
-						<div class="stat">
-							<strong>0 CHF</strong>
-							<span>Argent réel</span>
-						</div>
-					</div>
-				</div>
+            <div class="stat">
+              <strong>0 CHF</strong>
+              <span>Argent réel</span>
+            </div>
+          </div>
+        </div>
 
-				<div class="hero-visual">
-					<div class="glow"></div>
+        <div class="hero-visual">
+          <div class="glow"></div>
 
-					<div class="match-card">
-						<div class="match-header">
-							<div>
-								<span class="live"></span>
-								MATCH À VENIR
-							</div>
+          <div class="match-card">
+            <div class="match-header">
+              <div>
+                <span class="live"></span>
+                MATCH À VENIR
+              </div>
 
-							<span class="game">VALORANT</span>
-						</div>
+              <span class="game">VALORANT</span>
+            </div>
 
-						<div class="teams">
-							<div class="team">
-								<div class="team-logo purple">N</div>
+            <div class="teams">
+              <div class="team">
+                <div class="team-logo purple">N</div>
 
-								<span>NOVA</span>
-							</div>
+                <span>NOVA</span>
+              </div>
 
-							<div class="versus">
-								<strong>VS</strong>
-								<span>20:30</span>
-							</div>
+              <div class="versus">
+                <strong>VS</strong>
+                <span>20:30</span>
+              </div>
 
-							<div class="team">
-								<div class="team-logo cyan">V</div>
+              <div class="team">
+                <div class="team-logo cyan">V</div>
 
-								<span>VORTEX</span>
-							</div>
-						</div>
+                <span>VORTEX</span>
+              </div>
+            </div>
 
-						<div class="prediction">
-							<span>Votre pronostic</span>
+            <div class="prediction">
+              <span>Votre pronostic</span>
 
-							<div class="prediction-buttons">
-								<button>NOVA</button>
-								<button>VORTEX</button>
-							</div>
-						</div>
-					</div>
+              <div class="prediction-buttons">
+                <button>NOVA</button>
+                <button>VORTEX</button>
+              </div>
+            </div>
+          </div>
 
-					<div class="ranking-card">
-						<div>
-							<span class="rank">#1</span>
+          <div class="ranking-card">
+            <div>
+              <span class="rank">#1</span>
 
-							<div>
-								<strong>Classement</strong>
-								<p>Grimpez dans la ligue</p>
-							</div>
-						</div>
+              <div>
+                <strong>Classement</strong>
+                <p>Grimpez dans la ligue</p>
+              </div>
+            </div>
 
-						<span class="arrow">↗</span>
-					</div>
-				</div>
-			</section>
+            <span class="arrow">↗</span>
+          </div>
+        </div>
+      </section>
 
-			<section id="tournois" class="features">
-				<div class="section-title">
-					<span>LA PLATEFORME</span>
-					<h2>Tout pour vivre la compétition.</h2>
-				</div>
+      <section id="tournois" class="features">
+        <div class="section-title">
+          <span>LA PLATEFORME</span>
+          <h2>Tout pour vivre la compétition.</h2>
+        </div>
 
-				<div class="feature-grid">
-					<article class="feature-card">
-						<div class="feature-icon">01</div>
-						<h3>Tournois esport</h3>
-						<p>
-							Retrouvez les rencontres, les équipes et les résultats des
-							différents tournois organisés sur La Ligue.
-						</p>
-					</article>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-icon">01</div>
+            <h3>Tournois esport</h3>
+            <p>
+              Retrouvez les rencontres, les équipes et les résultats des
+              différents tournois organisés sur La Ligue.
+            </p>
+          </article>
 
-					<article class="feature-card">
-						<div class="feature-icon">02</div>
-						<h3>Pronostics</h3>
-						<p>
-							Faites vos pronostics avant les matchs et remportez des points
-							lorsque vos prédictions sont correctes.
-						</p>
-					</article>
+          <article class="feature-card">
+            <div class="feature-icon">02</div>
+            <h3>Pronostics</h3>
+            <p>
+              Faites vos pronostics avant les matchs et remportez des points
+              lorsque vos prédictions sont correctes.
+            </p>
+          </article>
 
-					<article class="feature-card">
-						<div class="feature-icon">03</div>
-						<h3>Classement</h3>
-						<p>
-							Comparez vos performances avec les autres joueurs et tentez
-							d'atteindre la première place.
-						</p>
-					</article>
-				</div>
-			</section>
-		</main>
-		<Footer/>
-	</div>
+          <article class="feature-card">
+            <div class="feature-icon">03</div>
+            <h3>Classement</h3>
+            <p>
+              Comparez vos performances avec les autres joueurs et tentez
+              d'atteindre la première place.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+    <Footer />
+  </div>
 </template>
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap");
 
 .home {
-	min-height: 100vh;
-	background:
-		radial-gradient(
-			circle at 75% 30%,
-			rgba(34, 211, 238, 0.08),
-			transparent 30%
-		),
-		radial-gradient(
-			circle at 20% 10%,
-			rgba(99, 102, 241, 0.1),
-			transparent 30%
-		),
-		#080d18;
-	color: #f8fafc;
-	font-family: "Ubuntu";
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at 75% 30%,
+      rgba(34, 211, 238, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 20% 10%,
+      rgba(99, 102, 241, 0.1),
+      transparent 30%
+    ),
+    #080d18;
+  color: #f8fafc;
+  font-family: "Ubuntu";
 }
 /* HERO */
 
 .hero {
-	max-width: 1200px;
-	min-height: 650px;
+  max-width: 1200px;
+  min-height: 650px;
 
-	margin: 0 auto;
-	padding: 90px 32px 120px;
+  margin: 0 auto;
+  padding: 90px 32px 120px;
 
-	display: grid;
-	grid-template-columns: 1.1fr 0.9fr;
-	align-items: center;
-	gap: 80px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  align-items: center;
+  gap: 80px;
 }
 
 .badge {
-	display: inline-flex;
-	padding: 7px 14px;
-	border: 1px solid rgba(34, 211, 238, 0.2);
-	border-radius: 50px;
-	background: rgba(34, 211, 238, 0.07);
-	color: #22d3ee;
-	font-size: 12px;
-	font-weight: 600;
-	text-transform: uppercase;
-	letter-spacing: 1px;
+  display: inline-flex;
+  padding: 7px 14px;
+  border: 1px solid rgba(34, 211, 238, 0.2);
+  border-radius: 50px;
+  background: rgba(34, 211, 238, 0.07);
+  color: #22d3ee;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .hero h2 {
-	max-width: 650px;
-	margin: 24px 0;
-	font-size: clamp(55px, 7vw, 90px);
-	line-height: 1.12;
-	letter-spacing: -4px;
+  max-width: 650px;
+  margin: 24px 0;
+  font-size: clamp(55px, 7vw, 90px);
+  line-height: 1.12;
+  letter-spacing: -4px;
 }
 
 .hero h2 span {
-	display: block;
-	background: linear-gradient(90deg, #22d3ee, #818cf8);
-	background-clip: text;
-	-webkit-background-clip: text;
-	color: transparent;
+  display: block;
+  background: linear-gradient(90deg, #22d3ee, #818cf8);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 .hero-description {
-	max-width: 550px;
+  max-width: 550px;
 
-	margin-bottom: 35px;
+  margin-bottom: 35px;
 
-	color: #94a3b8;
+  color: #94a3b8;
 
-	font-size: 17px;
-	line-height: 1.7;
+  font-size: 17px;
+  line-height: 1.7;
 }
 
 .hero-actions {
-	display: flex;
-	gap: 15px;
+  display: flex;
+  gap: 15px;
 }
 
 .primary-button,
 .secondary-button {
-	min-height: 48px;
+  min-height: 48px;
 
-	padding: 0 24px;
+  padding: 0 24px;
 
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-	border-radius: 10px;
+  border-radius: 10px;
 
-	font-size: 14px;
-	font-weight: 600;
+  font-size: 14px;
+  font-weight: 600;
 
-	cursor: pointer;
+  cursor: pointer;
 
-	text-decoration: none;
+  text-decoration: none;
 
-	transition: 0.25s;
+  transition: 0.25s;
 }
 
 .primary-button {
-	gap: 25px;
+  gap: 25px;
 
-	border: none;
+  border: none;
 
-	background: #22d3ee;
+  background: #22d3ee;
 
-	color: #051018;
+  color: #051018;
 }
 
 .primary-button:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 10px 30px rgba(34, 211, 238, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(34, 211, 238, 0.2);
 }
 
 .secondary-button {
-	border: 1px solid #334155;
+  border: 1px solid #334155;
 
-	color: #cbd5e1;
+  color: #cbd5e1;
 
-	background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .secondary-button:hover {
-	border-color: #64748b;
-	color: white;
+  border-color: #64748b;
+  color: white;
 }
 
 /* STATS */
 
 .stats {
-	margin-top: 65px;
+  margin-top: 65px;
 
-	display: flex;
-	align-items: center;
-	gap: 25px;
+  display: flex;
+  align-items: center;
+  gap: 25px;
 }
 
 .stat {
-	display: flex;
-	flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .stat strong {
-	font-size: 20px;
+  font-size: 20px;
 }
 
 .stat span {
-	margin-top: 4px;
+  margin-top: 4px;
 
-	color: #64748b;
+  color: #64748b;
 
-	font-size: 12px;
+  font-size: 12px;
 }
 
 .separator {
-	width: 1px;
-	height: 30px;
+  width: 1px;
+  height: 30px;
 
-	background: #1e293b;
+  background: #1e293b;
 }
 
 /* HERO VISUAL */
 
 .hero-visual {
-	position: relative;
+  position: relative;
 
-	display: flex;
-	flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-	gap: 16px;
+  gap: 16px;
 }
 
 .glow {
-	position: absolute;
+  position: absolute;
 
-	width: 400px;
-	height: 400px;
+  width: 400px;
+  height: 400px;
 
-	top: 0;
-	left: 30px;
+  top: 0;
+  left: 30px;
 
-	background: #22d3ee;
+  background: #22d3ee;
 
-	border-radius: 50%;
+  border-radius: 50%;
 
-	filter: blur(180px);
+  filter: blur(180px);
 
-	opacity: 0.08;
+  opacity: 0.08;
 
-	pointer-events: none;
+  pointer-events: none;
 }
 
 .match-card {
-	position: relative;
+  position: relative;
 
-	padding: 26px;
+  padding: 26px;
 
-	border: 1px solid #1e293b;
-	border-radius: 18px;
+  border: 1px solid #1e293b;
+  border-radius: 18px;
 
-	background: rgba(15, 23, 42, 0.8);
+  background: rgba(15, 23, 42, 0.8);
 
-	backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 
-	box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.25);
 }
 
 .match-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-	padding-bottom: 22px;
+  padding-bottom: 22px;
 
-	border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid #1e293b;
 
-	color: #64748b;
+  color: #64748b;
 
-	font-size: 11px;
-	font-weight: 700;
+  font-size: 11px;
+  font-weight: 700;
 
-	letter-spacing: 1px;
+  letter-spacing: 1px;
 }
 
 .live {
-	display: inline-block;
+  display: inline-block;
 
-	width: 7px;
-	height: 7px;
+  width: 7px;
+  height: 7px;
 
-	margin-right: 8px;
+  margin-right: 8px;
 
-	border-radius: 50%;
+  border-radius: 50%;
 
-	background: #22d3ee;
+  background: #22d3ee;
 }
 
 .game {
-	color: #818cf8;
+  color: #818cf8;
 }
 
 .teams {
-	padding: 38px 0;
+  padding: 38px 0;
 
-	display: grid;
-	grid-template-columns: 1fr auto 1fr;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
 
-	align-items: center;
+  align-items: center;
 }
 
 .team {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-	gap: 12px;
+  gap: 12px;
 
-	font-size: 13px;
-	font-weight: 700;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .team-logo {
-	width: 68px;
-	height: 68px;
+  width: 68px;
+  height: 68px;
 
-	display: flex;
-	align-items: center;
-	justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-	border-radius: 16px;
+  border-radius: 16px;
 
-	font-size: 28px;
-	font-weight: 800;
+  font-size: 28px;
+  font-weight: 800;
 }
 
 .purple {
-	background: rgba(99, 102, 241, 0.15);
-	color: #818cf8;
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
 }
 
 .cyan {
-	background: rgba(34, 211, 238, 0.15);
-	color: #22d3ee;
+  background: rgba(34, 211, 238, 0.15);
+  color: #22d3ee;
 }
 
 .versus {
-	padding: 0 20px;
+  padding: 0 20px;
 
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-	gap: 5px;
+  gap: 5px;
 }
 
 .versus strong {
-	color: #475569;
+  color: #475569;
 }
 
 .versus span {
-	color: #94a3b8;
-	font-size: 12px;
+  color: #94a3b8;
+  font-size: 12px;
 }
 
 .prediction {
-	padding-top: 20px;
+  padding-top: 20px;
 
-	border-top: 1px solid #1e293b;
+  border-top: 1px solid #1e293b;
 }
 
 .prediction > span {
-	color: #64748b;
+  color: #64748b;
 
-	font-size: 11px;
-	font-weight: 600;
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .prediction-buttons {
-	margin-top: 12px;
+  margin-top: 12px;
 
-	display: grid;
-	grid-template-columns: 1fr 1fr;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 
-	gap: 10px;
+  gap: 10px;
 }
 
 .prediction-buttons button {
-	padding: 11px;
+  padding: 11px;
 
-	border: 1px solid #263449;
-	border-radius: 8px;
+  border: 1px solid #263449;
+  border-radius: 8px;
 
-	background: #101827;
+  background: #101827;
 
-	color: #94a3b8;
+  color: #94a3b8;
 
-	cursor: pointer;
+  cursor: pointer;
 
-	transition: 0.2s;
+  transition: 0.2s;
 }
 
 .prediction-buttons button:hover {
-	border-color: #22d3ee;
+  border-color: #22d3ee;
 
-	color: #22d3ee;
+  color: #22d3ee;
 }
 
 /* RANKING */
 
 .ranking-card {
-	padding: 18px 20px;
+  padding: 18px 20px;
 
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-	border: 1px solid #1e293b;
-	border-radius: 14px;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
 
-	background: rgba(15, 23, 42, 0.6);
+  background: rgba(15, 23, 42, 0.6);
 }
 
 .ranking-card > div {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 
-	gap: 16px;
+  gap: 16px;
 }
 
 .rank {
-	width: 42px;
-	height: 42px;
+  width: 42px;
+  height: 42px;
 
-	display: flex;
-	justify-content: center;
-	align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-	border-radius: 10px;
+  border-radius: 10px;
 
-	background: rgba(34, 211, 238, 0.1);
+  background: rgba(34, 211, 238, 0.1);
 
-	color: #22d3ee;
+  color: #22d3ee;
 
-	font-weight: 700;
+  font-weight: 700;
 }
 
 .ranking-card strong {
-	font-size: 13px;
+  font-size: 13px;
 }
 
 .ranking-card p {
-	margin: 4px 0 0;
+  margin: 4px 0 0;
 
-	color: #64748b;
+  color: #64748b;
 
-	font-size: 11px;
+  font-size: 11px;
 }
 
 .arrow {
-	color: #64748b;
+  color: #64748b;
 
-	font-size: 20px;
+  font-size: 20px;
 }
 
 /* FEATURES */
 
 .features {
-	padding: 100px max(32px, calc((100% - 1136px) / 2));
+  padding: 100px max(32px, calc((100% - 1136px) / 2));
 
-	border-top: 1px solid #111827;
+  border-top: 1px solid #111827;
 
-	background: #090f1c;
+  background: #090f1c;
 }
 
 .section-title span {
-	color: #22d3ee;
+  color: #22d3ee;
 
-	font-size: 11px;
-	font-weight: 700;
+  font-size: 11px;
+  font-weight: 700;
 
-	letter-spacing: 2px;
+  letter-spacing: 2px;
 }
 
 .section-title h2 {
-	max-width: 500px;
+  max-width: 500px;
 
-	margin: 12px 0 45px;
+  margin: 12px 0 45px;
 
-	font-size: 36px;
+  font-size: 36px;
 }
 
 .feature-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 
-	gap: 18px;
+  gap: 18px;
 }
 
 .feature-card {
-	padding: 30px;
+  padding: 30px;
 
-	border: 1px solid #1e293b;
-	border-radius: 15px;
+  border: 1px solid #1e293b;
+  border-radius: 15px;
 
-	background: #0d1422;
+  background: #0d1422;
 
-	transition: 0.25s;
+  transition: 0.25s;
 }
 
 .feature-card:hover {
-	transform: translateY(-5px);
+  transform: translateY(-5px);
 
-	border-color: #334155;
+  border-color: #334155;
 }
 
 .feature-icon {
-	margin-bottom: 45px;
+  margin-bottom: 45px;
 
-	color: #22d3ee;
+  color: #22d3ee;
 
-	font-size: 12px;
-	font-weight: 700;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .feature-card h3 {
-	margin-bottom: 12px;
+  margin-bottom: 12px;
 
-	font-size: 18px;
+  font-size: 18px;
 }
 
 .feature-card p {
-	margin: 0;
+  margin: 0;
 
-	color: #64748b;
+  color: #64748b;
 
-	line-height: 1.7;
+  line-height: 1.7;
 
-	font-size: 14px;
+  font-size: 14px;
 }
 
 /* FOOTER */
 
-
-
 /* RESPONSIVE */
 
 @media (max-width: 900px) {
-	.hero {
-		grid-template-columns: 1fr;
+  .hero {
+    grid-template-columns: 1fr;
 
-		padding-top: 60px;
+    padding-top: 60px;
 
-		gap: 70px;
-	}
+    gap: 70px;
+  }
 
-	.hero h2 {
-		font-size: 65px;
-	}
+  .hero h2 {
+    font-size: 65px;
+  }
 
-	.hero-visual {
-		max-width: 600px;
-	}
+  .hero-visual {
+    max-width: 600px;
+  }
 
-	.feature-grid {
-		grid-template-columns: 1fr;
-	}
+  .feature-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 600px) {
-	.hero {
-		padding: 50px 20px 80px;
-	}
+  .hero {
+    padding: 50px 20px 80px;
+  }
 
-	.hero h2 {
-		font-size: 50px;
-		letter-spacing: -3px;
-	}
+  .hero h2 {
+    font-size: 50px;
+    letter-spacing: -3px;
+  }
 
-	.hero-actions {
-		flex-direction: column;
-	}
+  .hero-actions {
+    flex-direction: column;
+  }
 
-	.stats {
-		gap: 15px;
-	}
+  .stats {
+    gap: 15px;
+  }
 
-	.features {
-		padding: 70px 20px;
-	}
+  .features {
+    padding: 70px 20px;
+  }
 }
 </style>
