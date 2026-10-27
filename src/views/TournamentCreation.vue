@@ -1,50 +1,96 @@
 <script setup>
 import { ref } from "vue";
+import Header from "../components/Header.vue";
+import Footer from "../components/Footer.vue";
+import { creerTournoi } from "../services/tournoi.js";
 
-const nom = ref("");
-const jeu = ref("");
-const date = ref("");
-const nbEquipes = ref(8);
+const tournoi = ref({
+  name: "",
+  game: "",
+  date: "",
+  nbTeam: 8,
+});
 
-function creer() {
-  const tournoi = {
-    nom: nom.value,
-    jeu: jeu.value,
-    date: date.value,
-    nbEquipes: nbEquipes.value,
-  };
-  console.log("Tournoi créé :", tournoi);
+const chargement = ref(false);
+const erreur = ref("");
+const succes = ref(false);
+
+async function handleSubmit() {
+  chargement.value = true;
+  erreur.value = "";
+  succes.value = false;
+
+  try {
+    await creerTournoi(tournoi.value);
+    succes.value = true;
+    tournoi.value = { name: "", game: "", date: "", nbTeam: 8 };
+  } catch (e) {
+    erreur.value =
+      e.response?.data?.message || "Impossible de créer le tournoi.";
+  } finally {
+    chargement.value = false;
+  }
 }
 </script>
-<template>
-  <h1>Création de tournoi</h1>
-  <form class="creer-tournoi" @submit.prevent="creer">
-    <h2>Créer un tournoi</h2>
 
-    <label>
-      Nom du tournoi
-      <input v-model="nom" type="text" required />
-    </label>
-    <br />
-    <label>
-      Jeu
-      <input v-model="jeu" type="text" required />
-    </label>
-    <br />
-    <label>
-      Date
-      <input v-model="date" type="date" required />
-    </label>
-    <br />
-    <label>
-      Nombre d'équipes
-      <input v-model.number="nbEquipes" type="number" min="2" required />
-    </label>
-    <br />
-    <button type="submit">Créer le tournoi</button>
-  </form>
+<template>
+  <div class="home">
+    <Header />
+
+    <form class="creer-tournoi" @submit.prevent="handleSubmit">
+      <h2>Créer un tournoi</h2>
+
+      <label>
+        Nom du tournoi
+        <input v-model="tournoi.name" type="text" required />
+      </label>
+
+      <label>
+        Jeu
+        <input v-model="tournoi.game" type="text" required />
+      </label>
+
+      <label>
+        Date
+        <input v-model="tournoi.date" type="date" required />
+      </label>
+
+      <label>
+        Nombre d'équipes
+        <input v-model.number="tournoi.nbTeam" type="number" min="2" required />
+      </label>
+
+      <button type="submit" :disabled="chargement">
+        {{ chargement ? "Création…" : "Créer le tournoi" }}
+      </button>
+
+      <p v-if="erreur" class="message erreur">{{ erreur }}</p>
+      <p v-if="succes" class="message succes">Tournoi créé !</p>
+    </form>
+
+    <Footer />
+  </div>
 </template>
+
 <style scoped>
+.home {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at 75% 30%,
+      rgba(34, 211, 238, 0.08),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 20% 10%,
+      rgba(99, 102, 241, 0.1),
+      transparent 30%
+    ),
+    #080d18;
+  color: #f8fafc;
+  font-family: "Ubuntu", system-ui, sans-serif;
+}
+
 .creer-tournoi {
   max-width: 480px;
   margin: 2rem auto;
@@ -52,7 +98,7 @@ function creer() {
   display: flex;
   flex-direction: column;
   gap: 1.1rem;
-  background: #101a33;
+  background: rgba(15, 23, 42, 0.8);
   border: 1px solid #24304d;
   border-radius: 10px;
 }
@@ -75,7 +121,7 @@ function creer() {
 }
 
 .creer-tournoi input {
-  width: 100%;
+  width: auto;
   padding: 0.7rem 0.85rem;
   font: inherit;
   font-size: 1rem;
@@ -121,5 +167,25 @@ function creer() {
 
 .creer-tournoi button:active {
   transform: translateY(0);
+}
+
+.creer-tournoi button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.creer-tournoi .message {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.creer-tournoi .erreur {
+  color: #f87171;
+}
+
+.creer-tournoi .succes {
+  color: var(--accent);
 }
 </style>
