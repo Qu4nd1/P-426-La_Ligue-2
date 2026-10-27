@@ -95,34 +95,9 @@ const sprint = ref(1);
 			</section>
 			<section id="tournois" class="features">
 				<div class="section-title">
-					<span>LA PLATEFORME</span>
-					<h2>Tout pour vivre la compétition.</h2>
-				</div>
-				<div class="feature-grid">
-					<article class="feature-card">
-						<div class="feature-icon">01</div>
-						<h3>Tournois esport</h3>
-						<p>
-							Retrouvez les rencontres, les équipes et les résultats des
-							différents tournois organisés sur La Ligue.
-						</p>
-					</article>
-					<article class="feature-card">
-						<div class="feature-icon">02</div>
-						<h3>Pronostics</h3>
-						<p>
-							Faites vos pronostics avant les matchs et remportez des points
-							lorsque vos prédictions sont correctes.
-						</p>
-					</article>
-					<article class="feature-card">
-						<div class="feature-icon">03</div>
-						<h3>Classement</h3>
-						<p>
-							Comparez vos performances avec les autres joueurs et tentez
-							d'atteindre la première place.
-						</p>
-					</article>
+					<span>La Ligue</span>
+					<h2>Tournois</h2>
+					<article></article>
 				</div>
 			</section>
 		</main>
