@@ -10,18 +10,12 @@
   ],
   "tournois": [
     {
-      "name": "ETML-test",
-      "game": "Valorant",
-      "date": "2026-10-30",
-      "nbTeam": 8,
-      "id": "RvkRaYlYXl8"
-    },
-    {
-      "name": "ETML",
-      "game": "CS 2",
+      "id": "uapU680tue4",
+      "name": "test",
+      "game": "Counter-Strike",
       "date": "2026-11-05",
       "nbTeam": 8,
-      "id": "ilxudBJecK4"
+      "nbPlayers": 5
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"
