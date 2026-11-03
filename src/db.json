@@ -8,15 +8,6 @@
       "role": "admin"
     }
   ],
-  "tournois": [
-    {
-      "id": "uapU680tue4",
-      "name": "test",
-      "game": "Counter-Strike",
-      "date": "2026-11-05",
-      "nbTeam": 8,
-      "nbPlayers": 5
-    }
-  ],
+  "tournois": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

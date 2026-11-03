@@ -6,7 +6,6 @@ import { creerTournoi } from "../services/tournoi.js";
 import { game } from "../services/jeux.js";
 
 const tournoiVide = () => ({
-  id: 0,
   name: "",
   game: "",
   date: "",
@@ -50,7 +49,6 @@ async function handleSubmit() {
   }
 }
 </script>
-
 <template>
   <div class="home">
     <Header />
