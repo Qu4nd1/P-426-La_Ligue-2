@@ -15,9 +15,9 @@ const tournoiVide = () => ({
 
 const tournoi = ref(tournoiVide());
 
-const chargement = ref(false);
-const erreur = ref("");
-const succes = ref(false);
+const loading = ref(false);
+const error = ref("");
+const success = ref(false);
 
 // Options de joueurs selon le jeu choisi
 const optionsJoueurs = computed(() => game[tournoi.value.game] ?? []);
@@ -39,11 +39,11 @@ async function handleSubmit() {
 
   try {
     await creerTournoi(tournoi.value);
-    succes.value = true;
+    success.value = true;
     tournoi.value = tournoiVide();
   } catch (e) {
     error.value =
-      e.response?.data?.message || "Impossible de créer le tournoi.";
+      e.response?.data?.message || e + "Impossible de créer le tournoi.";
   } finally {
     loading.value = false;
   }
