@@ -17,6 +17,9 @@ import { connectedUser } from "../stores/userStore";
       <RouterLink :to="{ name: 'tournament-creation' }"
         >Créer un tournoi</RouterLink
       >
+      <RouterLink v-if="connectedUser.role === 'admin'" :to="{ name: 'teams' }"
+        >Inscriptions</RouterLink
+      >
       <a href="#fonctionnement">Fonctionnement</a>
       <a href="#classement">Classement</a>
       <RouterLink

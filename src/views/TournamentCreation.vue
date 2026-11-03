@@ -11,24 +11,24 @@ const tournoi = ref({
   nbTeam: 8,
 });
 
-const chargement = ref(false);
-const erreur = ref("");
-const succes = ref(false);
+const loading = ref(false);
+const error = ref("");
+const success = ref(false);
 
 async function handleSubmit() {
-  chargement.value = true;
-  erreur.value = "";
-  succes.value = false;
+  loading.value = true;
+  error.value = "";
+  success.value = false;
 
   try {
     await creerTournoi(tournoi.value);
-    succes.value = true;
+    success.value = true;
     tournoi.value = { name: "", game: "", date: "", nbTeam: 8 };
   } catch (e) {
-    erreur.value =
+    error.value =
       e.response?.data?.message || "Impossible de créer le tournoi.";
   } finally {
-    chargement.value = false;
+    loading.value = false;
   }
 }
 </script>
@@ -60,12 +60,12 @@ async function handleSubmit() {
         <input v-model.number="tournoi.nbTeam" type="number" min="2" required />
       </label>
 
-      <button type="submit" :disabled="chargement">
-        {{ chargement ? "Création…" : "Créer le tournoi" }}
+      <button type="submit" :disabled="loading">
+        {{ loading ? "Création…" : "Créer le tournoi" }}
       </button>
 
-      <p v-if="erreur" class="message erreur">{{ erreur }}</p>
-      <p v-if="succes" class="message succes">Tournoi créé !</p>
+      <p v-if="error" class="message error">{{ error }}</p>
+      <p v-if="success" class="message success">Tournoi créé !</p>
     </form>
 
     <Footer />
@@ -181,11 +181,11 @@ async function handleSubmit() {
   font-size: 0.9rem;
 }
 
-.creer-tournoi .erreur {
+.creer-tournoi .error {
   color: #f87171;
 }
 
-.creer-tournoi .succes {
+.creer-tournoi .success {
   color: var(--accent);
 }
 </style>
