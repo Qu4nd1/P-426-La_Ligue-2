@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginView from "../views/login.vue";
+import TeamsView from "../views/teams.vue";
 import TournamentCreation from "../views/TournamentCreation.vue";
+import { connectedUser } from "../stores/userStore";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -15,6 +17,15 @@ const router = createRouter({
       path: "/login",
       name: "login",
       component: LoginView,
+    },
+    {
+      path: "/teams",
+      name: "teams",
+      component: TeamsView,
+      beforeEnter: () =>
+        connectedUser.connected && connectedUser.role === "admin"
+          ? true
+          : { name: "home" },
     },
     {
       path: "/tournament-creation",
