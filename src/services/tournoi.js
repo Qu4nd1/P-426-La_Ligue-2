@@ -9,5 +9,8 @@ export const apiClient = axios.create({
 });
 
 export const creerTournoi = (tournoi) => {
-  return apiClient.post("/tournois", tournoi)
-}
+  return apiClient.post("/tournois", tournoi);
+};
+export const getTournois = () => {
+  return apiClient.get("/tournois");
+};
