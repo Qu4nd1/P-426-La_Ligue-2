@@ -21,7 +21,11 @@ import { connectedUser } from "../stores/userStore";
         >Inscriptions</RouterLink
       >
       <a href="#fonctionnement">Fonctionnement</a>
-      <a href="#classement">Classement</a>
+      <RouterLink
+        v-if="connectedUser.role === 'admin'"
+        :to="{ name: 'classement' }"
+        >Classement</RouterLink
+      >
       <RouterLink
         :to="{ name: 'login' }"
         class="login-button"

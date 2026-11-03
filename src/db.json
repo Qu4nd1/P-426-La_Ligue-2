@@ -28,29 +28,18 @@
     {
       "name": "Team 1",
       "capitain": "name1",
-      "members": [
-        "name1",
-        "name2",
-        "name3",
-        "name4",
-        "name5"
-      ],
+      "members": ["name1", "name2", "name3", "name4", "name5"],
       "status": "accepted",
       "id": "team1"
     },
     {
       "name": "Team 2",
       "capitain": "name2",
-      "members": [
-        "name1",
-        "name2",
-        "name3",
-        "name4",
-        "name5"
-      ],
+      "members": ["name1", "name2", "name3", "name4", "name5"],
       "status": "rejected",
       "id": "team2"
     }
   ],
+  "matches": [],
   "$schema": "./node_modules/json-server/schema.json"
 }
