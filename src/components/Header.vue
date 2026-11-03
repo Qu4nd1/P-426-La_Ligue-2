@@ -3,14 +3,14 @@ import { connectedUser } from "../stores/userStore";
 </script>
 <template>
   <header class="navbar">
-    <div class="brand">
+    <RouterLink :to="{ name: 'home' }" class="brand">
       <div class="logo">L</div>
 
       <div>
         <h1>La Ligue</h1>
         <span>Esport Platform</span>
       </div>
-    </div>
+    </RouterLink>
 
     <nav>
       <a href="#tournois">Tournois</a>
@@ -56,6 +56,8 @@ import { connectedUser } from "../stores/userStore";
   display: flex;
   align-items: center;
   gap: 12px;
+  color: inherit;
+  text-decoration: none;
 }
 
 .logo {
