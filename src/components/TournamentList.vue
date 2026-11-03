@@ -21,13 +21,15 @@ onMounted(async () => {
       <th>Name</th>
       <th>Game</th>
       <th>Date</th>
-      <th>Number of team</th>
+      <th>Number of Teams</th>
+      <th>Players per Team</th>
     </tr>
     <tr v-for="tournoi in tournois">
       <th>{{ tournoi.name }}</th>
       <th>{{ tournoi.game }}</th>
       <th>{{ tournoi.date }}</th>
       <th>{{ tournoi.nbTeam }}</th>
+      <th>{{ tournoi.nbPlayers }}</th>
     </tr>
   </table>
 </template>

@@ -1,19 +1,36 @@
 <script setup>
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import { creerTournoi } from "../services/tournoi.js";
+import { game } from "../services/jeux.js";
 
-const tournoi = ref({
+const tournoiVide = () => ({
   name: "",
   game: "",
   date: "",
   nbTeam: 8,
+  nbPlayers: null,
 });
 
-const loading = ref(false);
-const error = ref("");
-const success = ref(false);
+const tournoi = ref(tournoiVide());
+
+const chargement = ref(false);
+const erreur = ref("");
+const succes = ref(false);
+
+// Options de joueurs selon le jeu choisi
+const optionsJoueurs = computed(() => game[tournoi.value.game] ?? []);
+
+// Quand le jeu change : si un seul choix possible, on le sélectionne,
+// sinon on remet à vide pour forcer un choix valide
+watch(
+  () => tournoi.value.game,
+  () => {
+    const options = optionsJoueurs.value;
+    tournoi.value.nbPlayers = options.length === 1 ? options[0] : null;
+  },
+);
 
 async function handleSubmit() {
   loading.value = true;
@@ -22,8 +39,8 @@ async function handleSubmit() {
 
   try {
     await creerTournoi(tournoi.value);
-    success.value = true;
-    tournoi.value = { name: "", game: "", date: "", nbTeam: 8 };
+    succes.value = true;
+    tournoi.value = tournoiVide();
   } catch (e) {
     error.value =
       e.response?.data?.message || "Impossible de créer le tournoi.";
@@ -32,7 +49,6 @@ async function handleSubmit() {
   }
 }
 </script>
-
 <template>
   <div class="home">
     <Header />
@@ -47,7 +63,28 @@ async function handleSubmit() {
 
       <label>
         Jeu
-        <input v-model="tournoi.game" type="text" required />
+        <select v-model="tournoi.game" required>
+          <option value="" disabled>Choisir un jeu</option>
+          <option v-for="(_, nom) in game" :key="nom" :value="nom">
+            {{ nom }}
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Joueurs par équipe
+        <select
+          v-model.number="tournoi.nbPlayers"
+          :disabled="!tournoi.game"
+          required
+        >
+          <option :value="null" disabled>
+            {{ tournoi.game ? "Choisir" : "Choisis d'abord un jeu" }}
+          </option>
+          <option v-for="n in optionsJoueurs" :key="n" :value="n">
+            {{ n }}
+          </option>
+        </select>
       </label>
 
       <label>
@@ -120,7 +157,8 @@ async function handleSubmit() {
   color: #93a1c4;
 }
 
-.creer-tournoi input {
+.creer-tournoi input,
+.creer-tournoi select {
   width: auto;
   padding: 0.7rem 0.85rem;
   font: inherit;
@@ -137,10 +175,20 @@ async function handleSubmit() {
     box-shadow 0.15s;
 }
 
-.creer-tournoi input:focus {
+.creer-tournoi input:focus,
+.creer-tournoi select:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.2);
+}
+
+.creer-tournoi select {
+  cursor: pointer;
+}
+
+.creer-tournoi select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .creer-tournoi button {

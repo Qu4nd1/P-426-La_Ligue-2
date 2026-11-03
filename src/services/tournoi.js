@@ -14,3 +14,9 @@ export const creerTournoi = (tournoi) => {
 export const getTournois = () => {
   return apiClient.get("/tournois");
 };
+
+export const tournoiTest = {
+  id: 1,
+  name: "La Ligue - Open",
+  date: "2026-11-30", // format AAAA-MM-JJ
+};
