@@ -1,16 +1,155 @@
+:root {
+  color-scheme: dark;
+  --accent: #22d3ee;
+  --texte: #f8fafc;
+  --fond: #080d18;
+  --muted: #94a3b8;
+  --border: #263449;
+  font-family: Ubuntu, system-ui, sans-serif;
+  color: var(--texte);
+  background: var(--fond);
+}
+
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
-html,
-body,
-#app {
-  width: 100%;
-  min-height: 100%;
+body {
+  min-width: 280px;
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 18% 14%, #151734 0, transparent 44%),
+    radial-gradient(ellipse at 88% 29%, #0c2532 0, transparent 38%), var(--fond);
 }
 
-body {
+#app {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#main-content {
+  flex: 1;
+  min-width: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.text-link {
+  color: var(--accent);
+  text-underline-offset: 0.2em;
+}
+
+.league-form {
+  width: min(100% - 2rem, 480px);
+  min-width: 0;
+  margin: clamp(2rem, 7vw, 5rem) auto;
+  padding: clamp(1rem, 5vw, 1.75rem);
+  display: grid;
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.84);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.league-form form,
+.league-form fieldset {
+  display: grid;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.league-form h1,
+.league-form p {
+  margin: 0;
+}
+
+.league-form h1 {
+  color: var(--texte);
+  font-size: clamp(1.45rem, 5vw, 1.8rem);
+  overflow-wrap: anywhere;
+}
+
+.league-form label {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.league-form input,
+.league-form select {
+  min-width: 0;
+  width: 100%;
+  padding: 0.7rem 0.85rem;
+  color: var(--texte);
+  background: var(--fond);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+
+.league-form input:focus,
+.league-form select:focus {
+  border-color: var(--accent);
+}
+
+.league-form fieldset {
+  margin: 0;
+  padding: 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+}
+
+.league-form legend {
+  padding: 0 0.35rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.league-form button {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 7px;
+  color: var(--fond);
+  background: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.league-form button.secondary {
+  color: var(--accent);
+  background: transparent;
+}
+
+.league-form button:hover:not(:disabled) {
+  filter: brightness(1.16);
+}
+
+.league-form :is(button, select):disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.league-form .info {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+.league-form .error {
+  color: #fda4af;
+}
+
+.league-form .success {
+  color: #86efac;
 }

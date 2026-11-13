@@ -1,65 +1,106 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import Header from "../components/Header.vue";
-import Footer from "../components/Footer.vue";
+import { withBrowserLock } from "../services/browserSession.js";
 import {
+  countAcceptedTeams,
   getTeams,
   hasValidPlayerCount,
+  teamCaptain,
+  teamMembers,
+  teamStatus,
+  teamStatusLabels,
   updateTeamStatus,
 } from "../services/teams.js";
+import { getTournois, isTournamentFull } from "../services/tournoi.js";
 
 const teams = ref([]);
+const tournaments = ref([]);
 const loading = ref(true);
-const error = ref("");
+const loadError = ref("");
+const actionError = ref("");
 const currentAction = ref("");
 
-// Filter teams with pending status
-const pendingTeams = computed(() =>
-  teams.value.filter((team) => (team.status || "pending") === "pending"),
+const pendingCount = computed(
+  () => teams.value.filter((team) => teamStatus(team) === "pending").length,
+);
+const tournamentsById = computed(
+  () =>
+    new Map(tournaments.value.map((tournament) => [tournament.id, tournament])),
 );
 
-// Get the player count label for a team
-function playerCountLabel(team) {
-  const count = Array.isArray(team.members) ? team.members.length : 0;
-  return `${count} joueur${count > 1 ? "s" : ""}`;
+function tournamentIsFull(team) {
+  const tournament = tournamentsById.value.get(team.tournamentId);
+  if (!tournament) return false;
+  const entries = teams.value.filter(
+    (entry) => entry.tournamentId === team.tournamentId,
+  );
+  return isTournamentFull(tournament, countAcceptedTeams(entries));
 }
 
-//Load teams from the API
 async function loadTeams() {
   loading.value = true;
-  error.value = "";
+  loadError.value = "";
 
   try {
-    const teamsResponse = await getTeams();
-    teams.value = teamsResponse.data;
-  } catch (caughtError) {
-    error.value =
-      caughtError.response?.data?.message ||
-      "Impossible de charger les inscriptions.";
+    const [entries, events] = await Promise.all([getTeams(), getTournois()]);
+    teams.value = entries.data;
+    tournaments.value = events.data;
+  } catch {
+    loadError.value = "Impossible de charger les inscriptions.";
   } finally {
     loading.value = false;
   }
 }
 
-// Change the status of a team
 async function changeStatus(team, status) {
-  if (status === "accepted" && !hasValidPlayerCount(team)) {
-    error.value =
-      "Une équipe doit comporter entre 2 et 5 joueurs pour être acceptée.";
-    return;
-  }
-
-  // Set the current action to indicate which team is being processed
-  currentAction.value = `${team.id}-${status}`;
-  error.value = "";
+  if (currentAction.value) return;
+  currentAction.value = team.id;
+  actionError.value = "";
 
   try {
-    await updateTeamStatus(team.id, status);
-    team.status = status;
-  } catch (caughtError) {
-    error.value =
-      caughtError.response?.data?.message ||
-      "Impossible de mettre à jour le statut de l'inscription.";
+    await withBrowserLock("la-ligue:moderation", async () => {
+      const { data } = await getTeams();
+      teams.value = data;
+      const current = data.find((entry) => entry.id === team.id);
+      if (!current) {
+        actionError.value = "Cette équipe s’est retirée du tournoi.";
+        return;
+      }
+      if (teamStatus(current) !== "pending") {
+        actionError.value = "Cette inscription a déjà été traitée.";
+        return;
+      }
+      if (status === "accepted") {
+        if (
+          !hasValidPlayerCount(
+            current,
+            tournamentsById.value.get(current.tournamentId),
+          )
+        ) {
+          actionError.value =
+            "Le nombre de joueurs ne correspond pas à ce tournoi.";
+          return;
+        }
+        if (tournamentIsFull(current)) {
+          actionError.value =
+            "Ce tournoi a atteint son nombre maximal d’équipes.";
+          return;
+        }
+      }
+
+      const { data: updated } = await updateTeamStatus(current.id, status);
+      teams.value = teams.value.map((entry) =>
+        entry.id === updated.id ? updated : entry,
+      );
+    });
+  } catch (cause) {
+    if (cause.response?.status === 404) {
+      teams.value = teams.value.filter((entry) => entry.id !== team.id);
+      actionError.value = "Cette équipe s’est retirée du tournoi.";
+    } else {
+      actionError.value =
+        "Impossible de mettre à jour le statut de l’inscription.";
+    }
   } finally {
     currentAction.value = "";
   }
@@ -69,128 +110,137 @@ onMounted(loadTeams);
 </script>
 
 <template>
-  <div class="teams-page">
-    <Header />
+  <section class="teams-content">
+    <div class="page-heading">
+      <div>
+        <h1>Valider les inscriptions</h1>
+        <p>Examinez les équipes qui souhaitent participer aux tournois.</p>
+      </div>
+      <span v-if="!loading && !loadError" class="pending-count"
+        >{{ pendingCount }} en attente</span
+      >
+    </div>
 
-    <main class="teams-content">
-      <section class="page-heading">
-        <div>
-          <span class="eyebrow">Espace administrateur</span>
-          <h2>Valider les inscriptions</h2>
-          <p>Contrôlez les équipes qui souhaitent participer à la ligue.</p>
-        </div>
-        <span class="pending-count">{{ pendingTeams.length }} en attente</span>
-      </section>
+    <p v-if="actionError" class="message error" role="alert">
+      {{ actionError }}
+    </p>
+    <p v-if="loading" class="message" role="status">
+      Chargement des inscriptions…
+    </p>
+    <div v-else-if="loadError" class="message error">
+      <p role="alert">{{ loadError }}</p>
+      <button type="button" class="retry-button" @click="loadTeams">
+        Réessayer
+      </button>
+    </div>
+    <p v-else-if="teams.length === 0" class="message">
+      Aucune inscription pour le moment.
+    </p>
 
-      <p v-if="error" class="message error">{{ error }}</p>
-      <p v-if="loading" class="message">Chargement des inscriptions...</p>
-      <p v-else-if="teams.length === 0" class="message">
-        Aucune inscription pour le moment.
-      </p>
-
-      <section v-else class="team-list" aria-label="Liste des inscriptions">
-        <article v-for="team in teams" :key="team.id" class="team-card">
-          <div class="team-details">
-            <div class="team-avatar">
-              {{ team.name.charAt(0).toUpperCase() }}
-            </div>
-            <div>
-              <h3>{{ team.name }}</h3>
-              <p>Capitaine : {{ team.capitain || team.captain }}</p>
-              <p>{{ playerCountLabel(team) }}</p>
-            </div>
+    <div v-else class="team-list" aria-label="Liste des inscriptions">
+      <article v-for="team in teams" :key="team.id" class="team-card">
+        <div class="team-details">
+          <div class="team-avatar" aria-hidden="true">
+            {{ team.name?.charAt(0).toUpperCase() || "?" }}
           </div>
-
-          <ul class="members">
-            <li v-for="member in team.members" :key="member">{{ member }}</li>
-          </ul>
-
-          <div class="team-actions">
-            <span class="status" :class="team.status || 'pending'">
+          <div>
+            <h2>{{ team.name }}</h2>
+            <p>
               {{
-                team.status === "accepted"
-                  ? "Acceptée"
-                  : team.status === "rejected"
-                    ? "Refusée"
-                    : "En attente"
+                tournamentsById.get(team.tournamentId)?.name ||
+                "Tournoi non renseigné"
               }}
-            </span>
-            <template v-if="(team.status || 'pending') === 'pending'">
-              <button
-                class="accept-button"
-                :disabled="!hasValidPlayerCount(team) || currentAction !== ''"
-                :title="
-                  hasValidPlayerCount(team)
-                    ? 'Accepter cette équipe'
-                    : 'Une équipe doit avoir entre 2 et 5 joueurs'
-                "
-                @click="changeStatus(team, 'accepted')"
-              >
-                Accepter
-              </button>
-              <button
-                class="reject-button"
-                :disabled="currentAction !== ''"
-                @click="changeStatus(team, 'rejected')"
-              >
-                Refuser
-              </button>
-            </template>
+            </p>
+            <p>Capitaine · {{ teamCaptain(team) || "Non renseigné" }}</p>
           </div>
-        </article>
-      </section>
-    </main>
+        </div>
 
-    <Footer />
-  </div>
+        <ul class="members" aria-label="Joueurs">
+          <li v-for="(member, index) in teamMembers(team)" :key="index">
+            {{ member }}
+          </li>
+        </ul>
+
+        <div class="team-actions">
+          <span class="status" :class="teamStatus(team)">{{
+            teamStatusLabels[teamStatus(team)]
+          }}</span>
+          <template v-if="teamStatus(team) === 'pending'">
+            <button
+              type="button"
+              class="accept-button"
+              :disabled="
+                !!currentAction ||
+                tournamentIsFull(team) ||
+                !hasValidPlayerCount(
+                  team,
+                  tournamentsById.get(team.tournamentId),
+                )
+              "
+              @click="changeStatus(team, 'accepted')"
+            >
+              Accepter
+            </button>
+            <button
+              type="button"
+              class="reject-button"
+              :disabled="!!currentAction"
+              @click="changeStatus(team, 'rejected')"
+            >
+              Refuser
+            </button>
+            <span v-if="tournamentIsFull(team)" class="team-note"
+              >Tournoi complet</span
+            >
+            <span
+              v-else-if="
+                !hasValidPlayerCount(
+                  team,
+                  tournamentsById.get(team.tournamentId),
+                )
+              "
+              class="team-note"
+            >
+              Nombre de joueurs invalide
+            </span>
+          </template>
+        </div>
+      </article>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-.teams-page {
-  min-height: 100vh;
-  background: #080d18;
-  color: #f8fafc;
-  font-family: "Ubuntu", sans-serif;
-}
-
 .teams-content {
   max-width: 1200px;
-  min-height: calc(100vh - 180px);
   margin: 0 auto;
-  padding: 70px 32px;
+  padding: clamp(28px, 6vw, 70px) 32px;
 }
 
 .page-heading {
   display: flex;
   align-items: end;
   justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 36px;
+  gap: 16px 24px;
+  margin-bottom: 30px;
 }
 
-.eyebrow {
-  color: #22d3ee;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-
-h2 {
-  margin: 8px 0;
-  font-size: 38px;
+h1 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 5vw, 38px);
 }
 
 .page-heading p,
 .team-details p {
-  color: #94a3b8;
+  margin: 0;
+  color: var(--muted);
 }
 
 .pending-count {
   padding: 10px 16px;
   border: 1px solid rgba(34, 211, 238, 0.3);
   border-radius: 999px;
-  color: #22d3ee;
+  color: var(--accent);
   white-space: nowrap;
 }
 
@@ -201,25 +251,26 @@ h2 {
 
 .team-card {
   display: grid;
-  grid-template-columns: 1.2fr 1fr auto;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 235px);
   align-items: center;
-  gap: 24px;
+  gap: 16px 24px;
   padding: 24px;
   border: 1px solid #1e293b;
   border-radius: 16px;
   background: rgba(15, 23, 42, 0.72);
+  overflow-wrap: anywhere;
 }
 
 .team-details {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .team-avatar {
+  flex: 0 0 42px;
   display: grid;
-  width: 48px;
-  height: 48px;
+  height: 42px;
   place-items: center;
   border-radius: 12px;
   background: linear-gradient(135deg, #22d3ee, #6366f1);
@@ -227,8 +278,9 @@ h2 {
   font-weight: 700;
 }
 
-h3 {
-  margin-bottom: 6px;
+h2 {
+  margin: 0 0 6px;
+  font-size: 17px;
 }
 
 .team-details p {
@@ -240,11 +292,13 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .members li {
+  max-width: 100%;
   padding: 6px 10px;
   border-radius: 6px;
   background: #1e293b;
@@ -254,13 +308,20 @@ h3 {
 
 .team-actions {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: end;
   gap: 8px;
 }
 
+.team-note {
+  flex-basis: 100%;
+  color: var(--muted);
+  text-align: end;
+  font-size: 12px;
+}
+
 .status {
-  margin-right: 8px;
   color: #facc15;
   font-size: 12px;
   font-weight: 700;
@@ -275,11 +336,12 @@ h3 {
 }
 
 button {
-  padding: 9px 13px;
+  padding: 8px 11px;
   border: 0;
   border-radius: 8px;
   color: white;
   cursor: pointer;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -289,11 +351,15 @@ button:disabled {
 }
 
 .accept-button {
-  background: #059669;
+  background: #047857;
 }
 
 .reject-button {
   background: #be123c;
+}
+
+.retry-button {
+  background: #1e293b;
 }
 
 .message {
@@ -301,6 +367,10 @@ button:disabled {
   border: 1px solid #1e293b;
   border-radius: 12px;
   color: #cbd5e1;
+}
+
+.message p {
+  margin: 0 0 10px;
 }
 
 .message.error {
@@ -311,19 +381,25 @@ button:disabled {
 
 @media (max-width: 800px) {
   .teams-content {
-    padding: 40px 20px;
+    padding-inline: 20px;
   }
 
-  .page-heading,
-  .team-card {
+  .page-heading {
     align-items: start;
-    grid-template-columns: 1fr;
     flex-direction: column;
+  }
+
+  .team-card {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
   }
 
   .team-actions {
     justify-content: start;
-    flex-wrap: wrap;
+  }
+
+  .team-note {
+    text-align: start;
   }
 }
 </style>

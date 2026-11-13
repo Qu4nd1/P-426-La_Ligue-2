@@ -3,10 +3,14 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
   "scripts": {
-    "dev": "concurrently \"vite\" \"json-server src/db.json\"",
+    "dev": "concurrently --kill-others --names web,api \"vite\" \"npm run api\"",
+    "api": "json-server --host 127.0.0.1 src/db.json",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "concurrently --kill-others --names web,api \"vite preview\" \"npm run api\"",
     "format": "prettier . --write"
   },
   "dependencies": {

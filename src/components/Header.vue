@@ -1,57 +1,75 @@
 <script setup>
-import { connectedUser } from "../stores/userStore";
+import { useRoute, useRouter } from "vue-router";
+import { connectedUser, endSession } from "../stores/userStore.js";
+
+const route = useRoute();
+const router = useRouter();
+
+function logout() {
+  endSession();
+  if (route.meta.adminOnly) router.replace({ name: "home" });
+}
 </script>
+
 <template>
   <header class="navbar">
-    <RouterLink :to="{ name: 'home' }" class="brand">
-      <div class="logo">L</div>
-
+    <RouterLink class="brand" :to="{ name: 'home' }">
+      <div class="logo" aria-hidden="true">L</div>
       <div>
-        <h1>La Ligue</h1>
-        <span>Esport Platform</span>
+        <strong>La Ligue</strong>
+        <span>Plateforme esport</span>
       </div>
     </RouterLink>
 
-    <nav>
-      <a href="#tournois">Tournois</a>
-      <RouterLink :to="{ name: 'tournament-creation' }"
-        >Créer un tournoi</RouterLink
+    <nav aria-label="Navigation principale">
+      <RouterLink :to="{ name: 'home', hash: '#tournois' }"
+        >Tournois</RouterLink
       >
-      <RouterLink v-if="connectedUser.role === 'admin'" :to="{ name: 'teams' }"
-        >Inscriptions</RouterLink
+      <RouterLink :to="{ name: 'home', hash: '#fonctionnement' }"
+        >Fonctionnement</RouterLink
       >
-      <a href="#fonctionnement">Fonctionnement</a>
-      <RouterLink
-        v-if="connectedUser.role === 'admin'"
-        :to="{ name: 'classement' }"
+      <RouterLink :to="{ name: 'home', hash: '#classement' }"
         >Classement</RouterLink
       >
+      <template v-if="connectedUser.role === 'admin'">
+        <RouterLink :to="{ name: 'tournament-creation' }"
+          >Créer un tournoi</RouterLink
+        >
+        <RouterLink :to="{ name: 'teams' }">Inscriptions</RouterLink>
+      </template>
       <RouterLink
+        v-if="!connectedUser.connected"
         :to="{ name: 'login' }"
         class="login-button"
-        v-if="!connectedUser.connected"
       >
         Connexion
       </RouterLink>
-      <button class="login-button" v-else>
-        {{ connectedUser.username }}
+      <button
+        v-else
+        class="login-button"
+        type="button"
+        :aria-label="`Déconnexion (${connectedUser.username})`"
+        @click="logout"
+      >
+        Déconnexion
       </button>
     </nav>
   </header>
 </template>
-<style scoped>
-/* NAVBAR */
 
+<style scoped>
 .navbar {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px 32px;
-
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 16px 28px;
 }
+
 .brand {
   display: flex;
   align-items: center;
@@ -63,85 +81,61 @@ import { connectedUser } from "../stores/userStore";
 .logo {
   width: 44px;
   height: 44px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
+  display: grid;
+  place-items: center;
   border-radius: 12px;
-
   background: linear-gradient(135deg, #22d3ee, #6366f1);
-
   font-size: 22px;
   font-weight: 800;
 }
 
-.logo.small {
-  width: 32px;
-  height: 32px;
-  font-size: 16px;
-  border-radius: 8px;
-}
-
-.brand h1 {
-  margin: 0;
+.brand strong {
+  display: block;
   font-size: 18px;
 }
 
 .brand span {
-  color: #64748b;
-  font-size: 11px;
+  color: var(--muted);
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.4px;
 }
 
 nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 32px;
+  gap: 12px clamp(12px, 2vw, 28px);
 }
 
 nav a {
-  color: #94a3b8;
+  color: var(--muted);
   text-decoration: none;
   font-size: 14px;
-  transition: 0.2s;
 }
 
 nav a:hover {
   color: white;
 }
 
-.login-button {
-  padding: 10px 20px;
-
+nav .login-button {
+  padding: 8px 14px;
   border: 1px solid #334155;
-  border-radius: 10px;
-
+  border-radius: 9px;
   background: rgba(255, 255, 255, 0.04);
   color: white;
-
+  font-size: 14px;
   cursor: pointer;
-
-  transition: 0.2s;
 }
 
-.login-button:hover {
+nav .login-button:hover {
   background: white;
-  color: #080d18;
+  color: var(--fond);
 }
-@media (max-width: 900px) {
-  nav a {
-    display: none;
-  }
-}
+
 @media (max-width: 600px) {
   .navbar {
     padding: 20px;
-  }
-
-  .brand span {
-    display: none;
   }
 }
 </style>

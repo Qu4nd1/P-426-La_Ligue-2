@@ -1,8 +1,7 @@
-<script setup></script>
 <template>
   <footer>
     <div class="footer-brand">
-      <div class="logo small">L</div>
+      <div class="logo" aria-hidden="true">L</div>
       <strong>La Ligue</strong>
     </div>
 
@@ -16,6 +15,7 @@
 </template>
 <style scoped>
 footer {
+  width: 100%;
   max-width: 1200px;
 
   margin: auto;
@@ -25,7 +25,7 @@ footer {
   align-items: center;
   justify-content: space-between;
 
-  color: #475569;
+  color: #94a3b8;
 
   font-size: 12px;
 }
@@ -37,6 +37,17 @@ footer {
   gap: 10px;
 
   color: #94a3b8;
+}
+
+.logo {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #22d3ee, #6366f1);
+  color: #080d18;
+  font-weight: 800;
 }
 
 footer p {

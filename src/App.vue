@@ -1,11 +1,14 @@
 <script setup>
-import { RouterView } from "vue-router";
+import Header from "./components/Header.vue";
+import Footer from "./components/Footer.vue";
 </script>
 
 <template>
-  <main>
-    <RouterView />
+  <Header />
+  <main id="main-content">
+    <RouterView v-slot="{ Component, route }">
+      <component :is="Component" :key="route.path" />
+    </RouterView>
   </main>
+  <Footer />
 </template>
-
-<style scoped></style>

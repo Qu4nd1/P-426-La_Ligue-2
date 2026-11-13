@@ -1,45 +1,24 @@
-import axios from "axios";
+import { findRecords } from "./api.js";
 
-const apiUser = axios.create({
-  baseURL: "http://localhost:3000",
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-});
-
-export const verifyUser = async (user) => {
-  try {
-    const response = await apiUser.get("/users", {
-      params: {
-        email: user.email,
-      },
-    });
-
-    const existingUser = response.data[0];
-
-    if (!existingUser) {
-      return false;
-    }
-
-    const hashedPassword = await hashSHA256(user.pwd);
-
-    if (existingUser.pwdHash !== hashedPassword) {
-      return false;
-    }
-
-    return existingUser;
-  } catch (error) {
-    console.error("Erreur pendant la connexion :", error);
-    return false;
+export async function verifyUser({ email, pwd }) {
+  if (!crypto.subtle) {
+    throw new Error(
+      "Ouvrez La Ligue via localhost ou HTTPS pour vous connecter.",
+    );
   }
-};
 
-export async function hashSHA256(message) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(message);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const { data: users } = await findRecords("/users", {
+    email: email.trim().toLowerCase(),
+  });
+  const user = users[0];
+  if (!user) return null;
 
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  const hash = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(pwd),
+  );
+  const pwdHash = Array.from(new Uint8Array(hash), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+  return user.pwdHash === pwdHash ? user : null;
 }

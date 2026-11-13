@@ -22,24 +22,94 @@
       "date": "2026-11-05",
       "nbTeam": 8,
       "id": "ilxudBJecK4"
+    },
+    {
+      "name": "test",
+      "game": "Valorant",
+      "date": "2026-11-06",
+      "nbTeam": 8,
+      "nbPlayers": 5,
+      "id": "emRPswv4HSA"
+    },
+    {
+      "name": "test",
+      "game": "Valorant",
+      "date": "2026-11-06",
+      "nbTeam": 8,
+      "nbPlayers": 5,
+      "id": "T9svCn8gbnY"
+    },
+    {
+      "name": "test",
+      "game": "Valorant",
+      "date": "2026-11-06",
+      "nbTeam": 8,
+      "nbPlayers": 5,
+      "id": "Aa5oa6JodpI"
+    },
+    {
+      "name": "testtttttttttttttt",
+      "game": "Valorant",
+      "date": "2026-11-27",
+      "nbTeam": 8,
+      "nbPlayers": 5,
+      "id": "BVGvR9v_A6g"
     }
   ],
   "teams": [
     {
       "name": "Team 1",
       "capitain": "name1",
-      "members": ["name1", "name2", "name3", "name4", "name5"],
+      "members": [
+        "name1",
+        "name2",
+        "name3",
+        "name4",
+        "name5"
+      ],
       "status": "accepted",
       "id": "team1"
     },
     {
       "name": "Team 2",
       "capitain": "name2",
-      "members": ["name1", "name2", "name3", "name4", "name5"],
+      "members": [
+        "name1",
+        "name2",
+        "name3",
+        "name4",
+        "name5"
+      ],
       "status": "rejected",
       "id": "team2"
+    },
+    {
+      "name": "test1",
+      "captain": "tit",
+      "members": [
+        "tit",
+        "tata",
+        "toto",
+        "tete",
+        "tutu"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "6d3a1303525ae7faeaaef247e226df9d",
+      "status": "accepted",
+      "id": "ox7JsXjSVoI"
     }
   ],
-  "matches": [],
+  "matches": [
+    {
+      "id": "nova-vortex",
+      "game": "Valorant",
+      "teams": [
+        "NOVA",
+        "VORTEX"
+      ],
+      "winner": null
+    }
+  ],
+  "predictions": [],
   "$schema": "./node_modules/json-server/schema.json"
 }

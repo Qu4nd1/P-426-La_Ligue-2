@@ -1,27 +1,42 @@
-# La Ligue — socle de départ
+# La Ligue
 
-Ce dossier est votre point de départ pour le projet **La Ligue** (module I426 / projet P_DEV-426).
-C'est un projet **Vue 3 + Vite** minimal : il démarre, il s'affiche, et il est vide. Tout ce que
-vous y ajoutez est **votre** version du produit — trois équipes, trois versions du même backlog.
+Application Vue 3 + Vite pour le projet **La Ligue** (module I426 / projet P_DEV-426).
 
 ## Démarrer
 
-Il faut Node.js installé (v20 ou plus récent).
+Installez Node.js 22.12 ou une version plus récente. Extrayez le ZIP, puis ouvrez
+un terminal dans le dossier qui contient `package.json`.
 
-```
-npm install
+```bash
+npm ci
 npm run dev
 ```
 
-Puis ouvrez l'adresse affichée (par défaut http://localhost:5173).
-Pour produire une version compilée : `npm run build`.
+Ouvrez <http://127.0.0.1:5173>. La commande démarre Vite et l’API de
+démonstration JSON Server. Les tournois, les équipes, les résultats et les
+pronostics sont enregistrés dans `src/db.json`.
 
-## Où écrire
+Pour vérifier la version compilée, arrêtez d’abord le serveur de développement,
+puis lancez `npm run build` et `npm run preview`. L’adresse de prévisualisation
+par défaut est <http://127.0.0.1:4173>.
 
-- `src/App.vue` — la coquille de l'application (en-tête, objectif de sprint, zone des écrans).
-- `src/components/` — un fichier par écran (`AdminCreerTournoi.vue`, `Connexion.vue`, …).
-- `src/data/` — vos données de test (à remplacer par les appels au serveur quand il existera).
-- `src/style.css` — la base de style, à adapter.
+## Tester les parcours
+
+- **Administration**. Connectez-vous avec le compte de démonstration
+  `admin@test.ch` et le mot de passe `test`. Vous pouvez créer un tournoi,
+  accepter ou refuser les équipes et publier le résultat du match de démonstration.
+- **Inscription**. Depuis un tournoi ouvert, inscrivez une équipe et renseignez
+  les pseudos. Le capitaine compte parmi les joueurs. L’inscription et son
+  statut restent accessibles depuis le même navigateur, qui permet aussi de la
+  retirer. Les inscriptions ferment à la fin de la date affichée, en heure locale.
+- **Pronostics**. Indiquez votre pseudo et choisissez le gagnant de NOVA–VORTEX.
+  Vous pouvez modifier votre choix jusqu’à la publication du résultat. Un
+  pronostic correct vaut un point. Rechargez la page pour voir les résultats et
+  les points publiés depuis un autre navigateur.
+
+Le compte administrateur et les vérifications d’accès côté navigateur sont
+prévus pour la démonstration locale. Un déploiement public nécessite une API
+qui contrôle les accès et les écritures côté serveur.
 
 ## Ce que dit le client
 
