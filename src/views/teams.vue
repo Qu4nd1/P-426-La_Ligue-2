@@ -30,11 +30,11 @@ async function loadTeams() {
   error.value = "";
 
   try {
-    const response = await getTeams();
-    teams.value = response.data;
-  } catch (error) {
+    const teamsResponse = await getTeams();
+    teams.value = teamsResponse.data;
+  } catch (caughtError) {
     error.value =
-      error.response?.data?.message ||
+      caughtError.response?.data?.message ||
       "Impossible de charger les inscriptions.";
   } finally {
     loading.value = false;
@@ -56,9 +56,9 @@ async function changeStatus(team, status) {
   try {
     await updateTeamStatus(team.id, status);
     team.status = status;
-  } catch (error) {
+  } catch (caughtError) {
     error.value =
-      error.response?.data?.message ||
+      caughtError.response?.data?.message ||
       "Impossible de mettre à jour le statut de l'inscription.";
   } finally {
     currentAction.value = "";
