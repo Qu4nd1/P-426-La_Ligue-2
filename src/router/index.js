@@ -8,6 +8,16 @@ import RankingView from "../views/Classement.vue";
 
 const router = createRouter({
   history: createWebHistory(),
+  scrollBehavior(to) {
+    if (to.hash) {
+      return {
+        el: to.hash,
+        behavior: "smooth",
+      };
+    }
+
+    return { top: 0, behavior: "smooth" };
+  },
   routes: [
     {
       path: "/",
@@ -36,6 +46,11 @@ const router = createRouter({
         connectedUser.connected && connectedUser.role === "admin"
           ? true
           : { name: "home" },
+    },
+    {
+      path: "/bracket",
+      name: "bracket",
+      component: RankingView,
     },
     {
       path: "/tournament-creation",

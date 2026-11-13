@@ -1,5 +1,6 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import {
@@ -11,12 +12,15 @@ import {
 } from "../services/matches.js";
 import { getTeams } from "../services/teams.js";
 
+const route = useRoute();
 const teams = ref([]);
 const matches = ref([]);
 const scores = ref({});
 const loading = ref(true);
 const error = ref("");
 const currentAction = ref("");
+const isAdminView = computed(() => route.name === "classement");
+let liveRefreshTimer = null;
 
 const rounds = computed(() =>
   [...new Set(matches.value.map((match) => Number(match.round)))].sort(
@@ -32,8 +36,10 @@ function matchLabel(match) {
   return Number(match.round) === 1 ? "Premier tour" : `Tour ${match.round}`;
 }
 
-async function loadRanking() {
-  loading.value = true;
+async function loadRanking(silent = false) {
+  if (!silent) {
+    loading.value = true;
+  }
   error.value = "";
 
   try {
@@ -58,8 +64,20 @@ async function loadRanking() {
       caughtError.response?.data?.message ||
       "Impossible de charger le classement.";
   } finally {
-    loading.value = false;
+    if (!silent) {
+      loading.value = false;
+    }
   }
+}
+
+function startLiveRefresh() {
+  if (liveRefreshTimer) {
+    clearInterval(liveRefreshTimer);
+  }
+
+  liveRefreshTimer = setInterval(() => {
+    loadRanking(true);
+  }, 5000);
 }
 
 async function saveScore(match) {
@@ -132,7 +150,16 @@ async function placeWinner(match, winnerId) {
   }
 }
 
-onMounted(loadRanking);
+onMounted(() => {
+  loadRanking();
+  startLiveRefresh();
+});
+
+onUnmounted(() => {
+  if (liveRefreshTimer) {
+    clearInterval(liveRefreshTimer);
+  }
+});
 </script>
 
 <template>
@@ -141,10 +168,16 @@ onMounted(loadRanking);
     <main class="ranking-content">
       <section class="heading">
         <div>
-          <span class="eyebrow">Gestion du tournoi</span>
-          <h2>Classement et scores</h2>
+          <span class="eyebrow">
+            {{ isAdminView ? "Gestion du tournoi" : "Bracket en direct" }}
+          </span>
+          <h2>{{ isAdminView ? "Classement et scores" : "Bracket du tournoi" }}</h2>
           <p>
-            Saisissez le résultat d'un match pour faire avancer son vainqueur.
+            {{
+              isAdminView
+                ? "Saisissez le résultat d'un match pour faire avancer son vainqueur."
+                : "Suivez en temps réel les résultats et l'évolution du tournoi."
+            }}
           </p>
         </div>
       </section>
@@ -170,7 +203,8 @@ onMounted(loadRanking);
               <span>{{ teamName(match.team2Id) }}</span>
             </div>
             <span class="round-label">{{ matchLabel(match) }}</span>
-            <div class="score-fields">
+
+            <div v-if="isAdminView" class="score-fields">
               <input
                 v-model.number="scores[match.id].team1"
                 type="number"
@@ -200,6 +234,12 @@ onMounted(loadRanking);
                 {{ match.status === "completed" ? "Enregistré" : "Valider" }}
               </button>
             </div>
+            <div v-else class="score-readonly">
+              <span>{{ match.score1 ?? "–" }}</span>
+              <span>-</span>
+              <span>{{ match.score2 ?? "–" }}</span>
+            </div>
+
             <span v-if="match.status === 'completed'" class="winner"
               >Vainqueur : {{ teamName(match.winnerId) }}</span
             >
@@ -285,6 +325,15 @@ h2 {
   background: #0f172a;
   color: #f8fafc;
   text-align: center;
+}
+.score-readonly {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 120px;
+  justify-content: center;
+  font-weight: 700;
+  color: #e2e8f0;
 }
 button {
   padding: 9px 13px;
