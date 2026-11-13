@@ -13,14 +13,17 @@ import { connectedUser } from "../stores/userStore";
     </RouterLink>
 
     <nav>
-      <a href="#tournois">Tournois</a>
+      <RouterLink :to="{ name: 'home', hash: '#tournois' }">Tournois</RouterLink>
       <RouterLink :to="{ name: 'tournament-creation' }"
         >Créer un tournoi</RouterLink
       >
+      <RouterLink :to="{ name: 'bracket' }">Bracket</RouterLink>
       <RouterLink v-if="connectedUser.role === 'admin'" :to="{ name: 'teams' }"
         >Inscriptions</RouterLink
       >
-      <a href="#fonctionnement">Fonctionnement</a>
+      <RouterLink :to="{ name: 'home', hash: '#fonctionnement' }"
+        >Fonctionnement</RouterLink
+      >
       <RouterLink
         v-if="connectedUser.role === 'admin'"
         :to="{ name: 'classement' }"

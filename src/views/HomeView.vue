@@ -31,7 +31,12 @@ const sprint = ref(1);
                 <span>→</span>
               </button></RouterLink
             >
-            <a href="#tournois" class="secondary-button"> Voir les tournois </a>
+            <RouterLink
+              :to="{ name: 'home', hash: '#tournois' }"
+              class="secondary-button"
+            >
+              Voir les tournois
+            </RouterLink>
           </div>
           <div class="stats">
             <div class="stat">
@@ -100,6 +105,16 @@ const sprint = ref(1);
           <TournamentList />
 
           <article></article>
+        </div>
+      </section>
+      <section id="fonctionnement" class="features fonctionnement">
+        <div class="section-title">
+          <span>Fonctionnement</span>
+          <h3>Comment suivre et jouer</h3>
+          <p>
+            Consultez le bracket en direct, suivez les résultats des matchs et
+            rejoignez les prochains tournois pour soutenir votre équipe.
+          </p>
         </div>
       </section>
     </main>
@@ -223,6 +238,19 @@ nav a:hover {
   font-size: clamp(55px, 7vw, 90px);
   line-height: 1.12;
   letter-spacing: -4px;
+}
+.fonctionnement {
+  margin-top: 32px;
+}
+.fonctionnement h3 {
+  margin-top: 12px;
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+.fonctionnement p {
+  max-width: 760px;
+  color: #94a3b8;
+  line-height: 1.7;
 }
 .hero h2 span {
   display: block;
