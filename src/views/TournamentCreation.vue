@@ -4,11 +4,12 @@ import { createBrowserId } from "../services/browserSession.js";
 import { creerTournoi, isTournamentDate } from "../services/tournoi.js";
 import { game } from "../services/jeux.js";
 
+const nbTeamOk = [8, 16, 32];
 const tournoiVide = () => ({
   name: "",
   game: "",
   date: "",
-  nbTeam: 8,
+  nbTeam: nbTeamOk[0],
   nbPlayers: null,
 });
 
@@ -33,9 +34,8 @@ async function handleSubmit() {
   success.value = false;
   const details = { ...tournoi.value, name: tournoi.value.name.trim() };
 
-  if (!details.name || !optionsJoueurs.value.includes(details.nbPlayers)) {
-    error.value =
-      "Saisissez un nom et choisissez un jeu et un nombre de joueurs.";
+  if (!nbTeamOk.includes(details.nbTeam) || !isTournamentDate(details.date)) {
+    error.value = "Choisissez 8, 16 ou 32 équipes et une date valide.";
     return;
   }
   if (
@@ -107,14 +107,16 @@ async function handleSubmit() {
           <input v-model="tournoi.date" type="date" required />
         </label>
         <label>
-          Nombre d’équipes
-          <input
+          <span id="team-count-label">Nombre d’équipes</span>
+          <select
             v-model.number="tournoi.nbTeam"
-            type="number"
-            min="2"
-            step="1"
+            aria-labelledby="team-count-label"
             required
-          />
+          >
+            <option v-for="n in nbTeamOk" :key="n" :value="n">
+              {{ n }}
+            </option>
+          </select>
         </label>
         <button type="submit" :disabled="loading">
           {{ loading ? "Création…" : "Créer le tournoi" }}
