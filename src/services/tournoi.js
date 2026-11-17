@@ -1,4 +1,5 @@
 import { apiClient, findRecords } from "./api.js";
+import { getTeams } from "./teams.js";
 
 const dateFormat = new Intl.DateTimeFormat("fr-CH", { dateStyle: "medium" });
 
@@ -44,3 +45,27 @@ export function isTournamentFull(tournament, acceptedCount) {
     Number.isInteger(capacity) && capacity > 0 && acceptedCount >= capacity
   );
 }
+export async function creerMatchs(tournoi) {
+  const { data: existants } = await findRecords("/matches", {
+    tournamentId: tournoi.id,
+  });
+  if (existants.length) return;
+
+  const { data: teams } = await getTeams({
+    tournamentId: tournoi.id,
+    status: "accepted",
+  });
+  const noms = teams.map((team) => team.name).sort(() => Math.random() - 0.5);
+
+  for (let i = 0; i + 1 < noms.length; i += 2) {
+    await apiClient.post("/matches", {
+      tournamentId: tournoi.id,
+      game: tournoi.game,
+      teams: [noms[i], noms[i + 1]],
+      winner: null,
+    });
+  }
+}
+export const getMatchs = (tournamentId) => {
+  return findRecords("/matches", { tournamentId });
+};

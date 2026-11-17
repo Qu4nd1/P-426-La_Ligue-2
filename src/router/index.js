@@ -2,11 +2,10 @@ import { createRouter, createWebHistory } from "vue-router";
 import LoginView from "../views/login.vue";
 import TeamsView from "../views/teams.vue";
 import TournamentCreation from "../views/TournamentCreation.vue";
-import NotFoundView from "../views/NotFound.vue";
 import { connectedUser } from "../stores/userStore.js";
 import homeRoutes from "./routes/home.route.js";
 import tournoiRoutes from "./routes/tournoi.routes.js";
-
+import NotFoundView from "../views/NotFound.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   scrollBehavior(to, _from, savedPosition) {

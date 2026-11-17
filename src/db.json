@@ -54,32 +54,214 @@
       "nbTeam": 8,
       "nbPlayers": 5,
       "id": "BVGvR9v_A6g"
+    },
+    {
+      "name": "caca",
+      "game": "Valorant",
+      "date": "2026-11-13",
+      "nbTeam": 8,
+      "nbPlayers": 2,
+      "creationId": "40c34b3f377ecc617fa1ddfb8b819af8",
+      "id": "JZAXmP8AhgY"
+    },
+    {
+      "name": "testttwedwf",
+      "game": "Valorant",
+      "date": "2026-11-18",
+      "nbTeam": 8,
+      "nbPlayers": 5,
+      "creationId": "5973cbbf7c0246debcf4c35803bb7f4a",
+      "id": "_vI_h34H9E0"
     }
   ],
   "teams": [
     {
-      "name": "Team 1",
-      "capitain": "name1",
-      "members": ["name1", "name2", "name3", "name4", "name5"],
+      "name": "dede",
+      "captain": "1",
+      "members": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "7f27a1d315c2cfeeb5126407317b7a68",
       "status": "accepted",
-      "id": "team1"
+      "id": "Smlza47cg2A"
     },
     {
-      "name": "Team 2",
-      "capitain": "name2",
-      "members": ["name1", "name2", "name3", "name4", "name5"],
-      "status": "rejected",
-      "id": "team2"
+      "name": "NOVA",
+      "captain": "nova1",
+      "members": [
+        "nova1",
+        "nova2",
+        "nova3",
+        "nova4",
+        "nova5"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "a1b2c3d4e5f60718293a4b5c6d7e8f01",
+      "status": "accepted",
+      "id": "Tm2kQ9xLpA1"
+    },
+    {
+      "name": "VORTEX",
+      "captain": "vortex1",
+      "members": [
+        "vortex1",
+        "vortex2",
+        "vortex3",
+        "vortex4",
+        "vortex5"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "b2c3d4e5f60718293a4b5c6d7e8f0102",
+      "status": "accepted",
+      "id": "Tm3rW8vNqB2"
+    },
+    {
+      "name": "PHOENIX",
+      "captain": "phoenix1",
+      "members": [
+        "phoenix1",
+        "phoenix2",
+        "phoenix3",
+        "phoenix4",
+        "phoenix5"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "c3d4e5f60718293a4b5c6d7e8f010203",
+      "status": "accepted",
+      "id": "Tm4sX7uMrC3"
+    },
+    {
+      "name": "TITANS",
+      "captain": "titan1",
+      "members": [
+        "titan1",
+        "titan2",
+        "titan3",
+        "titan4",
+        "titan5"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "d4e5f60718293a4b5c6d7e8f01020304",
+      "status": "accepted",
+      "id": "Tm5tY6tLsD4"
+    },
+    {
+      "name": "ECLIPSE",
+      "captain": "eclipse1",
+      "members": [
+        "eclipse1",
+        "eclipse2",
+        "eclipse3",
+        "eclipse4",
+        "eclipse5"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "e5f60718293a4b5c6d7e8f0102030405",
+      "status": "accepted",
+      "id": "Tm6uZ5sKtE5"
+    },
+    {
+      "name": "RAPTORS",
+      "captain": "raptor1",
+      "members": [
+        "raptor1",
+        "raptor2",
+        "raptor3",
+        "raptor4",
+        "raptor5"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "f60718293a4b5c6d7e8f010203040506",
+      "status": "accepted",
+      "id": "Tm7vA4rJuF6"
+    },
+    {
+      "name": "SPECTRE",
+      "captain": "spectre1",
+      "members": [
+        "spectre1",
+        "spectre2",
+        "spectre3",
+        "spectre4",
+        "spectre5"
+      ],
+      "tournamentId": "BVGvR9v_A6g",
+      "registrationId": "0718293a4b5c6d7e8f01020304050607",
+      "status": "accepted",
+      "id": "Tm8wB3qItG7"
+    },
+    {
+      "name": "onuge",
+      "captain": "rqfqf",
+      "members": [
+        "rqfqf",
+        "wvqvwev",
+        "vevewv",
+        "vevwev",
+        "vev"
+      ],
+      "tournamentId": "_vI_h34H9E0",
+      "registrationId": "7f27a1d315c2cfeeb5126407317b7a68",
+      "status": "accepted",
+      "id": "byhkvmLJZlk"
     }
   ],
   "matches": [
     {
       "id": "nova-vortex",
       "game": "Valorant",
-      "teams": ["NOVA", "VORTEX"],
+      "teams": [
+        "NOVA",
+        "VORTEX"
+      ],
       "winner": null
+    },
+    {
+      "tournamentId": "BVGvR9v_A6g",
+      "game": "Valorant",
+      "teams": [
+        "NOVA",
+        "VORTEX"
+      ],
+      "winner": null,
+      "id": "zLnCEPQO7Rk"
+    },
+    {
+      "tournamentId": "BVGvR9v_A6g",
+      "game": "Valorant",
+      "teams": [
+        "TITANS",
+        "ECLIPSE"
+      ],
+      "winner": null,
+      "id": "5fEEYNSkUPk"
+    },
+    {
+      "tournamentId": "BVGvR9v_A6g",
+      "game": "Valorant",
+      "teams": [
+        "PHOENIX",
+        "RAPTORS"
+      ],
+      "winner": null,
+      "id": "NbluqinvFHo"
+    },
+    {
+      "tournamentId": "BVGvR9v_A6g",
+      "game": "Valorant",
+      "teams": [
+        "dede",
+        "SPECTRE"
+      ],
+      "winner": null,
+      "id": "kP8omCCU5YI"
     }
   ],
   "predictions": [],
-  "$schema": "../node_modules/json-server/schema.json"
+  "$schema": "./node_modules/json-server/schema.json"
 }
