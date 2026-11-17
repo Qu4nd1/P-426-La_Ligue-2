@@ -56,6 +56,10 @@ const router = createRouter({
       path: "/tournament-creation",
       name: "tournament-creation",
       component: TournamentCreation,
+      beforeEnter: () =>
+        connectedUser.connected && connectedUser.role === "admin"
+          ? true
+          : { name: "home" },
     },
   ],
 });

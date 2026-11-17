@@ -1,4 +1,5 @@
 import axios from "axios";
+import { sha256 } from "js-sha256";
 
 const apiUser = axios.create({
   baseURL: "http://localhost:3000",
@@ -36,10 +37,14 @@ export const verifyUser = async (user) => {
 };
 
 export async function hashSHA256(message) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(message);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  if (globalThis.crypto?.subtle) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(message);
+    const hashBuffer = await globalThis.crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
 
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  return sha256(message);
 }

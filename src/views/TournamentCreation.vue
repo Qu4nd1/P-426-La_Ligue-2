@@ -1,9 +1,12 @@
 <script setup>
 import { computed, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import { creerTournoi } from "../services/tournoi.js";
 import { game } from "../services/jeux.js";
+
+const router = useRouter();
 
 const tournoiVide = () => ({
   name: "",
@@ -15,9 +18,9 @@ const tournoiVide = () => ({
 
 const tournoi = ref(tournoiVide());
 
-const chargement = ref(false);
-const erreur = ref("");
-const succes = ref(false);
+const loading = ref(false);
+const error = ref("");
+const success = ref(false);
 
 // Options de joueurs selon le jeu choisi
 const optionsJoueurs = computed(() => game[tournoi.value.game] ?? []);
@@ -39,8 +42,9 @@ async function handleSubmit() {
 
   try {
     await creerTournoi(tournoi.value);
-    succes.value = true;
+    success.value = true;
     tournoi.value = tournoiVide();
+    router.push({ name: "home", hash: "#tournois" });
   } catch (e) {
     error.value =
       e.response?.data?.message || "Impossible de créer le tournoi.";

@@ -22,24 +22,243 @@
       "date": "2026-11-05",
       "nbTeam": 8,
       "id": "ilxudBJecK4"
+    },
+    {
+      "name": "test",
+      "game": "Rocket League",
+      "date": "2026-11-14",
+      "nbTeam": 8,
+      "nbPlayers": 3,
+      "id": "GFeIumasCLM"
     }
   ],
   "teams": [
     {
-      "name": "Team 1",
-      "capitain": "name1",
-      "members": ["name1", "name2", "name3", "name4", "name5"],
+      "name": "Aegis Wolves",
+      "capitain": "Luca",
+      "members": [
+        "Luca",
+        "Noah",
+        "Mila",
+        "Eli",
+        "Sacha"
+      ],
       "status": "accepted",
       "id": "team1"
     },
     {
-      "name": "Team 2",
-      "capitain": "name2",
-      "members": ["name1", "name2", "name3", "name4", "name5"],
-      "status": "rejected",
+      "name": "Nova Pulse",
+      "capitain": "Ines",
+      "members": [
+        "Ines",
+        "Theo",
+        "Yuna",
+        "Adam",
+        "Lea"
+      ],
+      "status": "accepted",
       "id": "team2"
+    },
+    {
+      "name": "Crimson Orbit",
+      "capitain": "Rayan",
+      "members": [
+        "Rayan",
+        "Nina",
+        "Ilyas",
+        "Kimi",
+        "Maya"
+      ],
+      "status": "accepted",
+      "id": "team3"
+    },
+    {
+      "name": "Frostbyte Five",
+      "capitain": "Jules",
+      "members": [
+        "Jules",
+        "Ari",
+        "Lina",
+        "Mateo",
+        "Zoe"
+      ],
+      "status": "accepted",
+      "id": "team4"
+    },
+    {
+      "name": "Titan Grid",
+      "capitain": "Soren",
+      "members": [
+        "Soren",
+        "Aya",
+        "Nils",
+        "Elio",
+        "Iris"
+      ],
+      "status": "accepted",
+      "id": "team5"
+    },
+    {
+      "name": "Vortex Academy",
+      "capitain": "Yanis",
+      "members": [
+        "Yanis",
+        "Luca2",
+        "Nora",
+        "Hugo",
+        "Eden"
+      ],
+      "status": "accepted",
+      "id": "team6"
+    },
+    {
+      "name": "Echo Ravens",
+      "capitain": "Nael",
+      "members": [
+        "Nael",
+        "Rita",
+        "Amine",
+        "Lio",
+        "Sana"
+      ],
+      "status": "accepted",
+      "id": "team7"
+    },
+    {
+      "name": "Quantum Reign",
+      "capitain": "Celia",
+      "members": [
+        "Celia",
+        "Anas",
+        "Tina",
+        "Yves",
+        "Milo"
+      ],
+      "status": "accepted",
+      "id": "team8"
     }
   ],
-  "matches": [],
+  "matches": [
+    {
+      "id": "match-r1-0",
+      "game": "Valorant",
+      "round": 1,
+      "position": 0,
+      "team1Id": "team1",
+      "team2Id": "team2",
+      "score1": 13,
+      "score2": 9,
+      "winnerId": "team1",
+      "status": "completed"
+    },
+    {
+      "id": "match-r1-1",
+      "game": "Valorant",
+      "round": 1,
+      "position": 1,
+      "team1Id": "team3",
+      "team2Id": "team4",
+      "score1": 8,
+      "score2": 13,
+      "winnerId": "team4",
+      "status": "completed"
+    },
+    {
+      "id": "match-r1-2",
+      "game": "Valorant",
+      "round": 1,
+      "position": 2,
+      "team1Id": "team5",
+      "team2Id": "team6",
+      "score1": 11,
+      "score2": 13,
+      "winnerId": "team6",
+      "status": "completed"
+    },
+    {
+      "id": "match-r1-3",
+      "game": "Valorant",
+      "round": 1,
+      "position": 3,
+      "team1Id": "team7",
+      "team2Id": "team8",
+      "score1": 13,
+      "score2": 7,
+      "winnerId": "team7",
+      "status": "completed"
+    },
+    {
+      "id": "match-r2-0",
+      "game": "Valorant",
+      "round": 2,
+      "position": 0,
+      "team1Id": "team1",
+      "team2Id": "team4",
+      "score1": 13,
+      "score2": 10,
+      "winnerId": "team1",
+      "status": "completed"
+    },
+    {
+      "id": "match-r2-1",
+      "game": "Valorant",
+      "round": 2,
+      "position": 1,
+      "team1Id": "team6",
+      "team2Id": "team7",
+      "score1": 5,
+      "score2": 2,
+      "winnerId": "team6",
+      "status": "completed"
+    },
+    {
+      "id": "match-r3-0",
+      "game": "Valorant",
+      "round": 3,
+      "position": 0,
+      "team1Id": "team1",
+      "team2Id": "team6",
+      "score1": null,
+      "score2": null,
+      "winnerId": null,
+      "status": "pending"
+    },
+    {
+      "id": "match-cs2-r1-0",
+      "game": "CS 2",
+      "round": 1,
+      "position": 0,
+      "team1Id": "team2",
+      "team2Id": "team4",
+      "score1": 16,
+      "score2": 11,
+      "winnerId": "team2",
+      "status": "completed"
+    },
+    {
+      "id": "match-cs2-r1-1",
+      "game": "CS 2",
+      "round": 1,
+      "position": 1,
+      "team1Id": "team6",
+      "team2Id": "team8",
+      "score1": 4,
+      "score2": 6,
+      "winnerId": "team8",
+      "status": "completed"
+    },
+    {
+      "id": "match-cs2-r2-0",
+      "game": "CS 2",
+      "round": 2,
+      "position": 0,
+      "team1Id": "team2",
+      "team2Id": "team8",
+      "score1": null,
+      "score2": null,
+      "winnerId": null,
+      "status": "pending"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

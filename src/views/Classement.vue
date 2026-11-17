@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
@@ -20,13 +20,40 @@ const loading = ref(true);
 const error = ref("");
 const currentAction = ref("");
 const isAdminView = computed(() => route.name === "classement");
+const selectedGame = ref("");
 let liveRefreshTimer = null;
 
-const rounds = computed(() =>
-  [...new Set(matches.value.map((match) => Number(match.round)))].sort(
-    (first, second) => first - second,
+const games = computed(() =>
+  [...new Set(matches.value.map((match) => match.game || "Non défini"))].sort(),
+);
+
+const visibleMatches = computed(() =>
+  matches.value.filter(
+    (match) => (match.game || "Non défini") === selectedGame.value,
   ),
 );
+
+const renderedGames = computed(() => {
+  const sourceMatches = isAdminView.value ? matches.value : visibleMatches.value;
+  const gameList = [
+    ...new Set(sourceMatches.map((match) => match.game || "Non défini")),
+  ];
+
+  return gameList.map((game) => {
+    const gameMatches = sourceMatches.filter(
+      (match) => (match.game || "Non défini") === game,
+    );
+    const rounds = [...new Set(gameMatches.map((match) => Number(match.round)))].sort(
+      (first, second) => first - second,
+    );
+
+    return {
+      game,
+      rounds,
+      matches: gameMatches,
+    };
+  });
+});
 
 function teamName(teamId) {
   return teams.value.find((team) => team.id === teamId)?.name || "À déterminer";
@@ -34,6 +61,10 @@ function teamName(teamId) {
 
 function matchLabel(match) {
   return Number(match.round) === 1 ? "Premier tour" : `Tour ${match.round}`;
+}
+
+function readGameFromQuery() {
+  return typeof route.query.game === "string" ? route.query.game : "";
 }
 
 async function loadRanking(silent = false) {
@@ -50,9 +81,18 @@ async function loadRanking(silent = false) {
     teams.value = teamsResponse.data;
     matches.value = matchesResponse.data.sort(
       (first, second) =>
+        (first.game || "").localeCompare(second.game || "") ||
         Number(first.round) - Number(second.round) ||
         Number(first.position) - Number(second.position),
     );
+
+    const gameFromQuery = readGameFromQuery();
+    if (gameFromQuery && games.value.includes(gameFromQuery)) {
+      selectedGame.value = gameFromQuery;
+    } else if (!selectedGame.value || !games.value.includes(selectedGame.value)) {
+      selectedGame.value = games.value[0] || "";
+    }
+
     matches.value.forEach((match) => {
       scores.value[match.id] = {
         team1: match.score1 ?? "",
@@ -126,6 +166,7 @@ async function placeWinner(match, winnerId) {
   const nextPosition = getNextMatchPosition(match);
   let nextMatch = matches.value.find(
     (candidate) =>
+      (candidate.game || "") === (match.game || "") &&
       Number(candidate.round) === nextPosition.round &&
       Number(candidate.position) === nextPosition.position,
   );
@@ -137,6 +178,7 @@ async function placeWinner(match, winnerId) {
   if (!nextMatch) {
     const response = await createMatch({
       ...nextPosition,
+      game: match.game || null,
       team1Id: Number(match.position) % 2 === 0 ? winnerId : null,
       team2Id: Number(match.position) % 2 === 1 ? winnerId : null,
       status: "pending",
@@ -154,6 +196,15 @@ onMounted(() => {
   loadRanking();
   startLiveRefresh();
 });
+
+watch(
+  () => route.query.game,
+  (queryGame) => {
+    if (typeof queryGame === "string" && games.value.includes(queryGame)) {
+      selectedGame.value = queryGame;
+    }
+  },
+);
 
 onUnmounted(() => {
   if (liveRefreshTimer) {
@@ -187,63 +238,74 @@ onUnmounted(() => {
       <p v-else-if="matches.length === 0" class="message">
         Aucun match n'est disponible pour le moment.
       </p>
+      <p v-else-if="!selectedGame" class="message">
+        Aucun jeu n'est disponible pour le moment.
+      </p>
 
       <section v-else class="rounds" aria-label="Classement et matchs">
-        <div v-for="round in rounds" :key="round" class="round">
-          <h3>{{ round === 1 ? "Premier tour" : `Tour ${round}` }}</h3>
-          <article
-            v-for="match in matches.filter(
-              (item) => Number(item.round) === round,
-            )"
-            :key="match.id"
-            class="match-card"
-          >
-            <div class="match-teams">
-              <span>{{ teamName(match.team1Id) }}</span>
-              <span>{{ teamName(match.team2Id) }}</span>
-            </div>
-            <span class="round-label">{{ matchLabel(match) }}</span>
 
-            <div v-if="isAdminView" class="score-fields">
-              <input
-                v-model.number="scores[match.id].team1"
-                type="number"
-                min="0"
-                step="1"
-                :disabled="match.status === 'completed' || currentAction !== ''"
-                :aria-label="`Score de ${teamName(match.team1Id)}`"
-              />
-              <span>-</span>
-              <input
-                v-model.number="scores[match.id].team2"
-                type="number"
-                min="0"
-                step="1"
-                :disabled="match.status === 'completed' || currentAction !== ''"
-                :aria-label="`Score de ${teamName(match.team2Id)}`"
-              />
-              <button
-                :disabled="
-                  match.status === 'completed' ||
-                  currentAction !== '' ||
-                  !match.team1Id ||
-                  !match.team2Id
-                "
-                @click="saveScore(match)"
-              >
-                {{ match.status === "completed" ? "Enregistré" : "Valider" }}
-              </button>
-            </div>
-            <div v-else class="score-readonly">
-              <span>{{ match.score1 ?? "–" }}</span>
-              <span>-</span>
-              <span>{{ match.score2 ?? "–" }}</span>
-            </div>
+        <p v-if="!isAdminView && visibleMatches.length === 0" class="message">
+          Aucun match pour ce jeu.
+        </p>
 
-            <span v-if="match.status === 'completed'" class="winner"
-              >Vainqueur : {{ teamName(match.winnerId) }}</span
+        <div v-for="gameGroup in renderedGames" :key="gameGroup.game" class="game-group">
+          <h3 class="game-title">{{ gameGroup.game }}</h3>
+          <div v-for="round in gameGroup.rounds" :key="`${gameGroup.game}-${round}`" class="round">
+            <h4>{{ round === 1 ? "Premier tour" : `Tour ${round}` }}</h4>
+            <article
+              v-for="match in gameGroup.matches.filter(
+                (item) => Number(item.round) === round,
+              )"
+              :key="match.id"
+              class="match-card"
             >
-          </article>
+              <div class="match-teams">
+                <span>{{ teamName(match.team1Id) }}</span>
+                <span>{{ teamName(match.team2Id) }}</span>
+              </div>
+              <span class="round-label">{{ matchLabel(match) }}</span>
+
+              <div v-if="isAdminView" class="score-fields">
+                <input
+                  v-model.number="scores[match.id].team1"
+                  type="number"
+                  min="0"
+                  step="1"
+                  :disabled="match.status === 'completed' || currentAction !== ''"
+                  :aria-label="`Score de ${teamName(match.team1Id)}`"
+                />
+                <span>-</span>
+                <input
+                  v-model.number="scores[match.id].team2"
+                  type="number"
+                  min="0"
+                  step="1"
+                  :disabled="match.status === 'completed' || currentAction !== ''"
+                  :aria-label="`Score de ${teamName(match.team2Id)}`"
+                />
+                <button
+                  :disabled="
+                    match.status === 'completed' ||
+                    currentAction !== '' ||
+                    !match.team1Id ||
+                    !match.team2Id
+                  "
+                  @click="saveScore(match)"
+                >
+                  {{ match.status === "completed" ? "Enregistré" : "Valider" }}
+                </button>
+              </div>
+              <div v-else class="score-readonly">
+                <span>{{ match.score1 ?? "–" }}</span>
+                <span>-</span>
+                <span>{{ match.score2 ?? "–" }}</span>
+              </div>
+
+              <span v-if="match.status === 'completed'" class="winner"
+                >Vainqueur : {{ teamName(match.winnerId) }}</span
+              >
+            </article>
+          </div>
         </div>
       </section>
     </main>
@@ -285,7 +347,16 @@ h2 {
   display: grid;
   gap: 34px;
 }
-.round h3 {
+.game-group {
+  display: grid;
+  gap: 18px;
+}
+.game-title {
+  margin: 0;
+  color: #22d3ee;
+  font-size: 18px;
+}
+.round h4 {
   margin-bottom: 14px;
   color: #cbd5e1;
 }
