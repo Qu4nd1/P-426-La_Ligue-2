@@ -12,7 +12,9 @@ import {
   teamStatusLabels,
 } from "../services/teams.js";
 import {
+  creerMatchs,
   formatTournamentDate,
+  getMatchs,
   getTournoi,
   isRegistrationOpen,
   isTournamentFull,
@@ -22,6 +24,7 @@ const tournamentId = String(useRoute().params.tournamentId);
 const tournoi = ref(null);
 const equipeInscrite = ref(null);
 const acceptedCount = ref(0);
+const matchs = ref([]);
 const nomEquipe = ref("");
 const joueurs = ref([]);
 const loading = ref(true);
@@ -65,6 +68,9 @@ async function loadTournament() {
     const registration = await getRegistration(tournamentId);
     equipeInscrite.value = registration.team;
     acceptedCount.value = registration.acceptedCount;
+    if (isTournamentFull(data, registration.acceptedCount))
+      await creerMatchs(data);
+    matchs.value = (await getMatchs(tournamentId)).data;
     resetForm();
   } catch (cause) {
     loadError.value =
@@ -154,7 +160,14 @@ onMounted(loadTournament);
         <br />
         Équipes acceptées · {{ acceptedCount }} / {{ tournoi.nbTeam }}
       </p>
-
+      <template v-if="matchs.length">
+        <h2>Matchs</h2>
+        <ul>
+          <li v-for="match in matchs" :key="match.id">
+            {{ match.teams[0] }} vs {{ match.teams[1] }}
+          </li>
+        </ul>
+      </template>
       <template v-if="equipeInscrite">
         <p>
           <strong>{{ equipeInscrite.name }}</strong> ·

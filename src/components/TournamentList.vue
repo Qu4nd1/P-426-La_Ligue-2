@@ -26,6 +26,7 @@ const rows = computed(() =>
     return {
       ...tournament,
       count,
+      complet: isTournamentFull(tournament, count),
       size: min === max ? min : `${min} à ${max}`,
       status: !isRegistrationOpen(tournament)
         ? "Inscriptions closes"
@@ -107,7 +108,7 @@ onMounted(loadTournois);
             <RouterLink
               class="action"
               :to="{
-                name: 'team-signup',
+                name: tournoi.complet ? 'tournoi' : 'team-signup',
                 params: { tournamentId: tournoi.id },
               }"
               :aria-label="`Voir le tournoi ${tournoi.name}`"
