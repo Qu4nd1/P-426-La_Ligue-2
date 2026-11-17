@@ -60,56 +60,26 @@
     {
       "name": "Team 1",
       "capitain": "name1",
-      "members": [
-        "name1",
-        "name2",
-        "name3",
-        "name4",
-        "name5"
-      ],
+      "members": ["name1", "name2", "name3", "name4", "name5"],
       "status": "accepted",
       "id": "team1"
     },
     {
       "name": "Team 2",
       "capitain": "name2",
-      "members": [
-        "name1",
-        "name2",
-        "name3",
-        "name4",
-        "name5"
-      ],
+      "members": ["name1", "name2", "name3", "name4", "name5"],
       "status": "rejected",
       "id": "team2"
-    },
-    {
-      "name": "test1",
-      "captain": "tit",
-      "members": [
-        "tit",
-        "tata",
-        "toto",
-        "tete",
-        "tutu"
-      ],
-      "tournamentId": "BVGvR9v_A6g",
-      "registrationId": "6d3a1303525ae7faeaaef247e226df9d",
-      "status": "accepted",
-      "id": "ox7JsXjSVoI"
     }
   ],
   "matches": [
     {
       "id": "nova-vortex",
       "game": "Valorant",
-      "teams": [
-        "NOVA",
-        "VORTEX"
-      ],
+      "teams": ["NOVA", "VORTEX"],
       "winner": null
     }
   ],
   "predictions": [],
-  "$schema": "./node_modules/json-server/schema.json"
+  "$schema": "../node_modules/json-server/schema.json"
 }
