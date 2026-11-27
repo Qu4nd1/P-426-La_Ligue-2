@@ -213,15 +213,6 @@
   ],
   "matches": [
     {
-      "id": "nova-vortex",
-      "game": "Valorant",
-      "teams": [
-        "NOVA",
-        "VORTEX"
-      ],
-      "winner": null
-    },
-    {
       "tournamentId": "BVGvR9v_A6g",
       "game": "Valorant",
       "teams": [
@@ -258,10 +249,18 @@
         "dede",
         "SPECTRE"
       ],
-      "winner": null,
+      "winner": "SPECTRE",
       "id": "kP8omCCU5YI"
     }
   ],
-  "predictions": [],
+  "predictions": [
+    {
+      "matchId": "zLnCEPQO7Rk",
+      "browserId": "31289ded38fa2710b3fad26d278f41c9",
+      "team": "NOVA",
+      "nickname": "43t43",
+      "id": "-sO842ATUjo"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }
