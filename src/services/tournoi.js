@@ -1,35 +1,47 @@
+
 import { apiClient, findRecords } from "./api.js";
 import { getTeams } from "./teams.js";
 
-const dateFormat = new Intl.DateTimeFormat("fr-CH", { dateStyle: "medium" });
+const dateFormat = new Intl.DateTimeFormat("fr-CH", {
+  dateStyle: "medium",
+});
 
 export async function creerTournoi(tournoi, creationId) {
   const { data } = await findRecords("/tournois", { creationId });
+
   if (data.length) return data[0];
+
   const response = await apiClient.post("/tournois", {
     ...tournoi,
     creationId,
   });
+
   return response.data;
 }
-export const getTournois = () => {
-  return apiClient.get("/tournois");
-};
-export const getTournoi = (id) => {
-  return apiClient.get(`/tournois/${encodeURIComponent(id)}`);
-};
+
+export const getTournois = () => apiClient.get("/tournois");
+
+export const getTournoi = (id) =>
+  apiClient.get(`/tournois/${encodeURIComponent(id)}`);
 
 export function isTournamentDate(date) {
-  if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date))
+  if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return false;
+  }
+
   const day = new Date(`${date}T00:00:00Z`);
-  return Number.isFinite(day.getTime()) && day.toISOString().startsWith(date);
+
+  return (
+    Number.isFinite(day.getTime()) &&
+    day.toISOString().startsWith(date)
+  );
 }
 
 export function isRegistrationOpen(tournament) {
   return (
     isTournamentDate(tournament.date) &&
-    Date.now() <= new Date(`${tournament.date}T23:59:59.999`).getTime()
+    Date.now() <=
+      new Date(`${tournament.date}T23:59:59.999`).getTime()
   );
 }
 
@@ -41,53 +53,67 @@ export function formatTournamentDate(date) {
 
 export function isTournamentFull(tournament, acceptedCount) {
   const capacity = Number(tournament.nbTeam);
+
   return (
-    Number.isInteger(capacity) && capacity > 0 && acceptedCount >= capacity
+    Number.isInteger(capacity) &&
+    capacity > 0 &&
+    acceptedCount >= capacity
   );
 }
+
 export async function creerMatchs(tournoi) {
   const { data: existants } = await findRecords("/matches", {
     tournamentId: tournoi.id,
   });
+
   if (existants.length) return;
 
   const { data: teams } = await getTeams({
     tournamentId: tournoi.id,
     status: "accepted",
   });
-  const noms = teams.map((team) => team.name).sort(() => Math.random() - 0.5);
+
+  const noms = teams
+    .map((team) => team.name)
+    .sort(() => Math.random() - 0.5);
 
   for (let i = 0; i + 1 < noms.length; i += 2) {
     await apiClient.post("/matches", {
       tournamentId: tournoi.id,
       game: tournoi.game,
+      round: 1,
       teams: [noms[i], noms[i + 1]],
       winner: null,
     });
   }
 }
-export const getMatchs = (tournamentId) => {
-  return findRecords("/matches", { tournamentId });
-};
 
+export const getMatchs = (tournamentId) =>
+  findRecords("/matches", { tournamentId });
+
+// Regroupe les matchs par tour
 export function decouperTours(matchs, nbEquipes) {
-  const tours = [];
-  let index = 0;
-  let tailleTour = Math.floor(nbEquipes / 2);
+  if (!Array.isArray(matchs) || !matchs.length) return [];
 
-  while (index < matchs.length && tailleTour >= 1) {
-    tours.push(matchs.slice(index, index + tailleTour));
-    index += tailleTour;
-    tailleTour = Math.floor(tailleTour / 2);
+  const rounds = {};
+
+  for (const match of matchs) {
+    const round = match.round ?? 1;
+
+    if (!rounds[round]) {
+      rounds[round] = [];
+    }
+
+    rounds[round].push(match);
   }
 
-  if (index < matchs.length) {
-    tours.push(matchs.slice(index));
-  }
-
-  return tours;
+  return Object.keys(rounds)
+    .map(Number)
+    .sort((a, b) => a - b)
+    .map((round) => rounds[round]);
 }
 
+// Enregistre le résultat d'un match
 export async function enregistrerScoreMatch(
   tournoi,
   match,
@@ -95,28 +121,61 @@ export async function enregistrerScoreMatch(
   score2,
   nbEquipes,
 ) {
-  const winner = score1 > score2 ? match.teams[0] : match.teams[1];
+  const winner =
+    score1 > score2 ? match.teams[0] : match.teams[1];
 
   await apiClient.patch(`/matches/${encodeURIComponent(match.id)}`, {
+    score1,
+    score2,
     winner,
   });
 
-  const { data: matchs } = await getMatchs(tournoi.id);
-  const tours = decouperTours(matchs, nbEquipes);
-  const dernierTour = tours[tours.length - 1] ?? [];
+  await createNextRound(tournoi);
 
-  if (dernierTour.length >= 2 && dernierTour.every((m) => m.winner)) {
-    const gagnants = dernierTour.map((m) => m.winner);
-    for (let i = 0; i + 1 < gagnants.length; i += 2) {
-      await apiClient.post("/matches", {
-        tournamentId: tournoi.id,
-        game: tournoi.game,
-        teams: [gagnants[i], gagnants[i + 1]],
-        winner: null,
-      });
-    }
-    return (await getMatchs(tournoi.id)).data;
+  const { data } = await getMatchs(tournoi.id);
+
+  return data;
+}
+
+export async function createNextRound(tournoi) {
+  const { data: matchs } = await findRecords("/matches", {
+    tournamentId: tournoi.id,
+  });
+
+  if (!matchs.length) return;
+
+  const currentRound = Math.max(
+    ...matchs.map((match) => match.round ?? 1),
+  );
+
+  const lastMatches = matchs.filter(
+    (match) => (match.round ?? 1) === currentRound,
+  );
+
+  if (
+    lastMatches.length < 2 ||
+    lastMatches.some((match) => !match.winner)
+  ) {
+    return;
   }
 
-  return matchs;
+  // Évite de créer plusieurs fois le même tour
+  const nextRound = currentRound + 1;
+
+  if (matchs.some((match) => (match.round ?? 1) === nextRound)) {
+    return;
+  }
+
+  for (let i = 0; i + 1 < lastMatches.length; i += 2) {
+    await apiClient.post("/matches", {
+      tournamentId: tournoi.id,
+      game: tournoi.game,
+      round: nextRound,
+      teams: [
+        lastMatches[i].winner,
+        lastMatches[i + 1].winner,
+      ],
+      winner: null,
+    });
+  }
 }
