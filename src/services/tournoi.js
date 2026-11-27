@@ -45,6 +45,7 @@ export function isTournamentFull(tournament, acceptedCount) {
     Number.isInteger(capacity) && capacity > 0 && acceptedCount >= capacity
   );
 }
+
 export async function creerMatchs(tournoi) {
   const { data: existants } = await findRecords("/matches", {
     tournamentId: tournoi.id,
@@ -61,11 +62,37 @@ export async function creerMatchs(tournoi) {
     await apiClient.post("/matches", {
       tournamentId: tournoi.id,
       game: tournoi.game,
+      round: 1,
       teams: [noms[i], noms[i + 1]],
       winner: null,
     });
   }
 }
+
 export const getMatchs = (tournamentId) => {
   return findRecords("/matches", { tournamentId });
 };
+
+export async function createNextRound(tournoi) {
+  const { data: matchs } = await findRecords("/matches", {
+    tournamentId: tournoi.id,
+  });
+  if (!matchs.length) return;
+
+  const currentRound = Math.max(...matchs.map((match) => match.round ?? 1));
+  const lastMatches = matchs.filter(
+    (match) => (match.round ?? 1) === currentRound,
+  );
+  if (lastMatches.length < 2 || lastMatches.some((match) => !match.winner))
+    return;
+
+  for (let i = 0; i + 1 < lastMatches.length; i += 2) {
+    await apiClient.post("/matches", {
+      tournamentId: tournoi.id,
+      game: tournoi.game,
+      round: currentRound + 1,
+      teams: [lastMatches[i].winner, lastMatches[i + 1].winner],
+      winner: null,
+    });
+  }
+}
