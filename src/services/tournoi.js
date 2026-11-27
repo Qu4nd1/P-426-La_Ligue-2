@@ -69,3 +69,54 @@ export async function creerMatchs(tournoi) {
 export const getMatchs = (tournamentId) => {
   return findRecords("/matches", { tournamentId });
 };
+
+export function decouperTours(matchs, nbEquipes) {
+  const tours = [];
+  let index = 0;
+  let tailleTour = Math.floor(nbEquipes / 2);
+
+  while (index < matchs.length && tailleTour >= 1) {
+    tours.push(matchs.slice(index, index + tailleTour));
+    index += tailleTour;
+    tailleTour = Math.floor(tailleTour / 2);
+  }
+
+  if (index < matchs.length) {
+    tours.push(matchs.slice(index));
+  }
+
+  return tours;
+}
+
+export async function enregistrerScoreMatch(
+  tournoi,
+  match,
+  score1,
+  score2,
+  nbEquipes,
+) {
+  const winner = score1 > score2 ? match.teams[0] : match.teams[1];
+
+  await apiClient.patch(`/matches/${encodeURIComponent(match.id)}`, {
+    winner,
+  });
+
+  const { data: matchs } = await getMatchs(tournoi.id);
+  const tours = decouperTours(matchs, nbEquipes);
+  const dernierTour = tours[tours.length - 1] ?? [];
+
+  if (dernierTour.length >= 2 && dernierTour.every((m) => m.winner)) {
+    const gagnants = dernierTour.map((m) => m.winner);
+    for (let i = 0; i + 1 < gagnants.length; i += 2) {
+      await apiClient.post("/matches", {
+        tournamentId: tournoi.id,
+        game: tournoi.game,
+        teams: [gagnants[i], gagnants[i + 1]],
+        winner: null,
+      });
+    }
+    return (await getMatchs(tournoi.id)).data;
+  }
+
+  return matchs;
+}
