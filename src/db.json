@@ -72,6 +72,15 @@
       "nbPlayers": 5,
       "creationId": "5973cbbf7c0246debcf4c35803bb7f4a",
       "id": "_vI_h34H9E0"
+    },
+    {
+      "name": "heg",
+      "game": "Valorant",
+      "date": "2026-11-27",
+      "nbTeam": 32,
+      "nbPlayers": 5,
+      "creationId": "eeb1e2cbd4045195356c69bffcba1d8b",
+      "id": "nZlz7xMBS_g"
     }
   ],
   "teams": [
@@ -209,6 +218,21 @@
       "registrationId": "7f27a1d315c2cfeeb5126407317b7a68",
       "status": "accepted",
       "id": "byhkvmLJZlk"
+    },
+    {
+      "name": "iuwheuiweg",
+      "captain": "e",
+      "members": [
+        "e",
+        "r",
+        "t",
+        "z",
+        "u"
+      ],
+      "tournamentId": "nZlz7xMBS_g",
+      "registrationId": "caee9fbbb7179cb1adeeafe3b3293a5e",
+      "status": "accepted",
+      "id": "nTeVFLMtLxA"
     }
   ],
   "matches": [
@@ -219,8 +243,10 @@
         "NOVA",
         "VORTEX"
       ],
-      "winner": null,
-      "id": "zLnCEPQO7Rk"
+      "winner": "NOVA",
+      "id": "zLnCEPQO7Rk",
+      "score1": 7,
+      "score2": 6
     },
     {
       "tournamentId": "BVGvR9v_A6g",
@@ -229,8 +255,10 @@
         "TITANS",
         "ECLIPSE"
       ],
-      "winner": null,
-      "id": "5fEEYNSkUPk"
+      "winner": "TITANS",
+      "id": "5fEEYNSkUPk",
+      "score1": 3,
+      "score2": 1
     },
     {
       "tournamentId": "BVGvR9v_A6g",
@@ -239,8 +267,10 @@
         "PHOENIX",
         "RAPTORS"
       ],
-      "winner": null,
-      "id": "NbluqinvFHo"
+      "winner": "RAPTORS",
+      "id": "NbluqinvFHo",
+      "score1": 1,
+      "score2": 2
     },
     {
       "tournamentId": "BVGvR9v_A6g",
@@ -251,6 +281,45 @@
       ],
       "winner": "SPECTRE",
       "id": "kP8omCCU5YI"
+    },
+    {
+      "tournamentId": "BVGvR9v_A6g",
+      "game": "Valorant",
+      "round": 2,
+      "teams": [
+        "NOVA",
+        "TITANS"
+      ],
+      "winner": "TITANS",
+      "id": "kXId5Q8wPw4",
+      "score1": 2,
+      "score2": 3
+    },
+    {
+      "tournamentId": "BVGvR9v_A6g",
+      "game": "Valorant",
+      "round": 2,
+      "teams": [
+        "RAPTORS",
+        "SPECTRE"
+      ],
+      "winner": "RAPTORS",
+      "id": "269CB9dKOAU",
+      "score1": 15,
+      "score2": 1
+    },
+    {
+      "tournamentId": "BVGvR9v_A6g",
+      "game": "Valorant",
+      "round": 3,
+      "teams": [
+        "TITANS",
+        "RAPTORS"
+      ],
+      "winner": "TITANS",
+      "id": "8_14X-s2AQw",
+      "score1": 13,
+      "score2": 2
     }
   ],
   "predictions": [

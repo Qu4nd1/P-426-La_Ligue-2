@@ -5,7 +5,6 @@ import { countAcceptedTeams, getTeams } from "../services/teams.js";
 import {
   createNextRound,
   creerMatchs,
-  decouperTours,
   enregistrerScoreMatch,
   formatTournamentDate,
   getMatchs,
@@ -15,11 +14,13 @@ import {
 import { connectedUser } from "../stores/userStore.js";
 
 const tournamentId = String(useRoute().params.tournamentId);
+
 const tournoi = ref(null);
 const matchs = ref([]);
 const nbEquipes = ref(0);
 const loading = ref(true);
 const erreur = ref("");
+
 const scores = reactive({});
 const erreursMatch = reactive({});
 const enCours = reactive({});
@@ -28,18 +29,47 @@ const isAdmin = computed(
   () => connectedUser.connected && connectedUser.role === "admin",
 );
 
-const tours = computed(() =>
-  decouperTours(matchs.value, nbEquipes.value || Number(tournoi.value?.nbTeam)),
-);
+// Organisation des matchs par tour
+const rounds = computed(() => {
+  if (!tournoi.value) return [];
 
-const vainqueurTournoi = computed(() => {
-  const dernierTour = tours.value[tours.value.length - 1];
-  if (dernierTour?.length === 1 && dernierTour[0].winner) {
-    return dernierTour[0].winner;
+  const byRound = {};
+
+  for (const match of matchs.value) {
+    (byRound[match.round ?? 1] ??= []).push(match);
   }
-  return null;
+
+  const nbTeam = Number(tournoi.value.nbTeam);
+  const totalRounds = Math.ceil(Math.log2(nbTeam));
+
+  if (!Number.isFinite(totalRounds) || totalRounds < 1) return [];
+
+  const result = [];
+
+  for (let round = 1; round <= totalRounds; round++) {
+    const expected = Math.ceil(nbTeam / 2 ** round);
+    const currentMatches = byRound[round] ?? [];
+
+    result.push(
+      Array.from({ length: expected }, (_, i) => {
+        return (
+          currentMatches[i] ?? {
+            id: `round${round}-${i}`,
+            teams: [null, null],
+            winner: null,
+          }
+        );
+      }),
+    );
+  }
+
+  return result;
 });
 
+// Champion du tournoi
+const champion = computed(() => rounds.value.at(-1)?.[0]?.winner ?? null);
+
+// Initialisation des scores
 function initScores(listeMatchs) {
   for (const match of listeMatchs) {
     if (!scores[match.id]) {
@@ -48,15 +78,33 @@ function initScores(listeMatchs) {
   }
 }
 
-function titreTour(index, tour) {
-  if (tour.length === 1 && tours.value.length > 1) return "Finale";
-  if (tour.length === 2 && tours.value.length > 1) return "Demi-finales";
-  return `Tour ${index + 1}`;
+// Nom du tour
+function roundName(index) {
+  const totalRounds = Math.ceil(Math.log2(Number(tournoi.value?.nbTeam)));
+
+  const names = ["Finale", "Demi-finales", "Quarts de finale"];
+
+  return names[totalRounds - 1 - index] ?? `Tour ${index + 1}`;
 }
 
+// Vérifie le vainqueur
+function isWinner(match, index) {
+  return Boolean(match.winner) && match.winner === match.teams?.[index];
+}
+
+// Vérifie le statut du match
+function matchStatus(match) {
+  if (match.winner) return "Terminé";
+
+  return match.teams?.[0] && match.teams?.[1] ? "À jouer" : "En attente";
+}
+
+// Enregistrement du score
 async function validerScore(match) {
   erreursMatch[match.id] = "";
+
   const [raw1, raw2] = scores[match.id] ?? ["", ""];
+
   const score1 = Number(raw1);
   const score2 = Number(raw2);
 
@@ -66,9 +114,11 @@ async function validerScore(match) {
     !Number.isFinite(score1) ||
     !Number.isFinite(score2) ||
     score1 < 0 ||
-    score2 < 0
+    score2 < 0 ||
+    !Number.isInteger(score1) ||
+    !Number.isInteger(score2)
   ) {
-    erreursMatch[match.id] = "Saisissez deux scores valides.";
+    erreursMatch[match.id] = "Saisissez deux scores entiers valides.";
     return;
   }
 
@@ -78,6 +128,7 @@ async function validerScore(match) {
   }
 
   enCours[match.id] = true;
+
   try {
     matchs.value = await enregistrerScoreMatch(
       tournoi.value,
@@ -86,67 +137,43 @@ async function validerScore(match) {
       score2,
       nbEquipes.value || Number(tournoi.value.nbTeam),
     );
+
+    const { data } = await getMatchs(tournamentId);
+
+    matchs.value = data;
     initScores(matchs.value);
-  } catch {
+  } catch (error) {
+    console.error(error);
     erreursMatch[match.id] = "Impossible d'enregistrer le score.";
   } finally {
     enCours[match.id] = false;
   }
 }
 
-const rounds = computed(() => {
-  const byRound = {};
-  for (const match of matchs.value) {
-    (byRound[match.round ?? 1] ??= []).push(match);
-  }
-
-  const nbTeam = Number(tournoi.value.nbTeam);
-  const totalRounds = Math.ceil(Math.log2(nbTeam));
-  const result = [];
-  for (let round = 1; round <= totalRounds; round++) {
-    result.push(
-      byRound[round] ??
-        Array.from({ length: Math.ceil(nbTeam / 2 ** round) }, (_, i) => ({
-          id: `round${round}-${i}`,
-          teams: [null, null],
-          winner: null,
-        })),
-    );
-  }
-  return result;
-});
-
-const champion = computed(() => rounds.value.at(-1)?.[0]?.winner ?? null);
-
-function roundName(index) {
-  const totalRounds = Math.ceil(Math.log2(Number(tournoi.value.nbTeam)));
-  const names = ["Finale", "Demi-finales", "Quarts de finale"];
-  return names[totalRounds - 1 - index] ?? `Tour ${index + 1}`;
-}
-
-function isWinner(match, index) {
-  return Boolean(match.winner) && match.winner === match.teams[index];
-}
-
-function matchStatus(match) {
-  if (match.winner) return "Terminé";
-  return match.teams[0] && match.teams[1] ? "À jouer" : "En attente";
-}
-
+// Chargement du tournoi
 onMounted(async () => {
   try {
     tournoi.value = (await getTournoi(tournamentId)).data;
+
     const { data: teams } = await getTeams({
       tournamentId,
       status: "accepted",
     });
+
     nbEquipes.value = countAcceptedTeams(teams);
-    if (isTournamentFull(tournoi.value, nbEquipes.value))
+
+    if (isTournamentFull(tournoi.value, nbEquipes.value)) {
       await creerMatchs(tournoi.value);
+    }
+
     await createNextRound(tournoi.value);
-    matchs.value = (await getMatchs(tournamentId)).data;
+
+    const { data } = await getMatchs(tournamentId);
+
+    matchs.value = data;
     initScores(matchs.value);
-  } catch {
+  } catch (error) {
+    console.error(error);
     erreur.value = "Impossible de charger ce tournoi.";
   } finally {
     loading.value = false;
@@ -157,12 +184,21 @@ onMounted(async () => {
 <template>
   <section class="league-form">
     <p v-if="loading" class="info" role="status">Chargement du tournoi…</p>
-    <p v-else-if="erreur" class="error" role="alert">{{ erreur }}</p>
-    <template v-else>
+
+    <p v-else-if="erreur" class="error" role="alert">
+      {{ erreur }}
+    </p>
+
+    <template v-else-if="tournoi">
       <h1>{{ tournoi.name }}</h1>
+
       <div class="chips">
         <span class="chip">{{ tournoi.game }}</span>
-        <span class="chip">{{ formatTournamentDate(tournoi.date) }}</span>
+
+        <span class="chip">
+          {{ formatTournamentDate(tournoi.date) }}
+        </span>
+
         <span class="chip">
           {{ nbEquipes }} / {{ tournoi.nbTeam }} équipes
         </span>
@@ -172,18 +208,39 @@ onMounted(async () => {
         🏆 Champion · <strong>{{ champion }}</strong>
       </p>
 
+      <!-- BRACKET -->
       <div v-if="matchs.length" class="bracket">
-        <div v-for="(round, index) in rounds" :key="index" class="round">
-          <h2>{{ roundName(index) }}</h2>
+        <div
+          v-for="(round, roundIndex) in rounds"
+          :key="roundIndex"
+          class="round"
+          :style="{
+            '--match-count': round.length,
+            '--round-index': roundIndex,
+            '--total-rounds': rounds.length,
+          }"
+        >
+          <h2>{{ roundName(roundIndex) }}</h2>
+
           <div class="round-matches">
-            <div v-for="(match, i) in round" :key="match.id" class="slot">
-              <article class="match" :class="{ done: match.winner }">
+            <div
+              v-for="(match, matchIndex) in round"
+              :key="match.id"
+              class="slot"
+              :style="{
+                '--match-index': matchIndex,
+                '--match-count': round.length,
+              }"
+            >
+              <article class="bracket-match" :class="{ done: match.winner }">
                 <header class="match-head">
-                  <span>Match {{ i + 1 }}</span>
+                  <span>Match {{ matchIndex + 1 }}</span>
+
                   <span class="badge" :class="{ done: match.winner }">
                     {{ matchStatus(match) }}
                   </span>
                 </header>
+
                 <div
                   v-for="n in [0, 1]"
                   :key="n"
@@ -191,39 +248,89 @@ onMounted(async () => {
                   :class="{
                     winner: isWinner(match, n),
                     loser: match.winner && !isWinner(match, n),
-                    empty: !match.teams[n],
+                    empty: !match.teams?.[n],
                   }"
                 >
-                  <span class="name">{{ match.teams[n] ?? "À déterminer" }}</span>
-                  <span v-if="isWinner(match, n)" class="check">✓</span>
+                  <span class="name">
+                    {{ match.teams?.[n] ?? "À déterminer" }}
+                  </span>
+
+                  <span v-if="isWinner(match, n)" class="check"> ✓ </span>
                 </div>
               </article>
+
+              <!-- Sortie vers le prochain tour -->
+              <div
+                v-if="roundIndex < rounds.length - 1"
+                class="connector"
+                :class="{
+                  'connector-first': matchIndex % 2 === 0,
+                  'connector-second': matchIndex % 2 === 1,
+                }"
+              >
+                <span
+                  class="connector-horizontal"
+                  :class="{
+                    active: match.winner,
+                  }"
+                ></span>
+
+                <span
+                  class="connector-vertical"
+                  :class="{
+                    active:
+                      rounds[roundIndex][
+                        matchIndex % 2 === 0 ? matchIndex + 1 : matchIndex - 1
+                      ]?.winner,
+                  }"
+                ></span>
+              </div>
             </div>
-      <h2>Matchs</h2>
-      <p v-if="vainqueurTournoi" class="champion">
-        Vainqueur du tournoi : {{ vainqueurTournoi }}
+          </div>
+        </div>
+      </div>
+
+      <p v-else class="info">
+        Les matchs seront générés quand toutes les équipes seront inscrites.
       </p>
 
-      <div v-if="tours.length" class="tours">
-        <div v-for="(tour, index) in tours" :key="index" class="tour">
-          <h3 v-if="tours.length > 1" class="tour-title">
-            {{ titreTour(index, tour) }}
+      <!-- LISTE DES MATCHS -->
+      <h2>Matchs</h2>
+
+      <p v-if="champion" class="champion">
+        Vainqueur du tournoi : {{ champion }}
+      </p>
+
+      <div v-if="matchs.length" class="tours">
+        <div v-for="(round, index) in rounds" :key="index" class="tour">
+          <h3 v-if="rounds.length > 1" class="tour-title">
+            {{ roundName(index) }}
           </h3>
+
           <div class="matchs">
-            <article v-for="match in tour" :key="match.id" class="match">
+            <article v-for="match in round" :key="match.id" class="match">
               <div class="team-row">
                 <span
                   class="equipe"
-                  :class="{ 'equipe--winner': match.winner === match.teams[0] }"
+                  :class="{
+                    'equipe--winner': isWinner(match, 0),
+                  }"
                 >
-                  {{ match.teams[0] }}
+                  {{ match.teams?.[0] ?? "À déterminer" }}
                 </span>
+
                 <input
-                  v-if="isAdmin && !match.winner"
+                  v-if="
+                    isAdmin &&
+                    !match.winner &&
+                    match.teams?.[0] &&
+                    match.teams?.[1]
+                  "
                   v-model="scores[match.id][0]"
                   class="score-input"
                   type="number"
                   min="0"
+                  step="1"
                   placeholder="0"
                   :aria-label="`Score de ${match.teams[0]}`"
                 />
@@ -234,16 +341,25 @@ onMounted(async () => {
               <div class="team-row">
                 <span
                   class="equipe"
-                  :class="{ 'equipe--winner': match.winner === match.teams[1] }"
+                  :class="{
+                    'equipe--winner': isWinner(match, 1),
+                  }"
                 >
-                  {{ match.teams[1] }}
+                  {{ match.teams?.[1] ?? "À déterminer" }}
                 </span>
+
                 <input
-                  v-if="isAdmin && !match.winner"
+                  v-if="
+                    isAdmin &&
+                    !match.winner &&
+                    match.teams?.[0] &&
+                    match.teams?.[1]
+                  "
                   v-model="scores[match.id][1]"
                   class="score-input"
                   type="number"
                   min="0"
+                  step="1"
                   placeholder="0"
                   :aria-label="`Score de ${match.teams[1]}`"
                 />
@@ -253,7 +369,9 @@ onMounted(async () => {
                 Vainqueur : {{ match.winner }}
               </p>
 
-              <template v-else-if="isAdmin">
+              <template
+                v-else-if="isAdmin && match.teams?.[0] && match.teams?.[1]"
+              >
                 <button
                   type="button"
                   class="btn-valider"
@@ -262,7 +380,12 @@ onMounted(async () => {
                 >
                   {{ enCours[match.id] ? "Enregistrement…" : "Valider" }}
                 </button>
-                <p v-if="erreursMatch[match.id]" class="match-error" role="alert">
+
+                <p
+                  v-if="erreursMatch[match.id]"
+                  class="match-error"
+                  role="alert"
+                >
                   {{ erreursMatch[match.id] }}
                 </p>
               </template>
@@ -270,10 +393,8 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-      <p v-else class="info">
-        Les matchs seront générés quand toutes les équipes seront inscrites.
-      </p>
     </template>
+
     <RouterLink class="text-link" :to="{ name: 'home', hash: '#tournois' }">
       ← Retour aux tournois
     </RouterLink>
@@ -289,30 +410,6 @@ onMounted(async () => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-.tours {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.tour-title {
-  margin: 0 0 0.75rem;
-  font-size: 1rem;
-  color: var(--muted);
-}
-
-.champion {
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  background: rgba(34, 197, 94, 0.14);
-  border: 1px solid rgba(34, 197, 94, 0.45);
-  color: #86efac;
-  font-weight: 700;
-}
-
-.matchs {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
 }
 
 .chip {
@@ -330,13 +427,20 @@ onMounted(async () => {
   border-radius: 12px;
   background: linear-gradient(90deg, rgba(34, 211, 238, 0.22), transparent);
   font-size: 1.1rem;
+  font-weight: 700;
 }
+
+/* BRACKET */
 
 .bracket {
   --gap: 3rem;
+  --line-color: var(--border);
+  --winner-color: #22c55e;
+
   display: flex;
+  align-items: stretch;
   gap: var(--gap);
-  padding: 0.5rem 0.25rem 1rem;
+  padding: 1rem 0.5rem;
   overflow-x: auto;
   scroll-snap-type: x proximity;
 }
@@ -345,11 +449,12 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   flex: 1 0 230px;
+  min-width: 230px;
   scroll-snap-align: start;
 }
 
 .round h2 {
-  margin: 0 0 0.75rem;
+  margin: 0 0 1rem;
   color: var(--accent);
   font-size: 0.8rem;
   letter-spacing: 0.12em;
@@ -359,29 +464,35 @@ onMounted(async () => {
 
 .round-matches {
   display: flex;
-  flex: 1;
   flex-direction: column;
+  flex: 1;
 }
+
+/* Positionnement proportionnel des matchs */
 
 .slot {
   position: relative;
   display: flex;
   flex: 1;
   align-items: center;
+  min-height: 110px;
   padding: 0.5rem 0;
 }
 
-.match {
+/* CARTES */
+
+.bracket-match {
   position: relative;
+  z-index: 2;
   width: 100%;
   border: 1px solid var(--border);
   border-radius: 12px;
-  background: rgba(15, 23, 42, 0.92);
+  background: rgba(15, 23, 42, 0.95);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   transition: border-color 0.15s;
 }
 
-.match:hover {
+.bracket-match:hover {
   border-color: var(--accent);
 }
 
@@ -405,6 +516,8 @@ onMounted(async () => {
   color: #4ade80;
 }
 
+/* EQUIPES */
+
 .team {
   display: flex;
   align-items: center;
@@ -412,22 +525,7 @@ onMounted(async () => {
   gap: 0.5rem;
   padding: 0.65rem 0.75rem;
   border-left: 3px solid transparent;
-.team-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.equipe {
-  flex: 1;
-  padding: 0.5rem;
-  border-radius: 8px;
-  background: #1e293b;
   font-weight: 600;
-}
-
-.team:last-child {
-  border-radius: 0 0 11px 11px;
 }
 
 .team + .team {
@@ -439,6 +537,132 @@ onMounted(async () => {
 }
 
 .team.empty {
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.team.loser {
+  opacity: 0.45;
+}
+
+.team.winner {
+  border-left-color: var(--winner-color);
+  background: linear-gradient(90deg, rgba(34, 197, 94, 0.2), transparent);
+}
+
+.check {
+  color: var(--winner-color);
+  font-weight: 700;
+}
+
+/* CONNEXIONS */
+
+.connector {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: var(--gap);
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ligne horizontale */
+
+.connector-horizontal {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 50%;
+  height: 2px;
+  background: var(--line-color);
+  transform: translateY(-50%);
+}
+
+/* Ligne verticale commune */
+
+.connector-vertical {
+  position: absolute;
+  left: 50%;
+  width: 2px;
+  background: var(--line-color);
+}
+
+/* Premier match : branche vers le bas */
+
+.connector-first .connector-vertical {
+  top: 50%;
+  height: 50%;
+}
+
+/* Deuxième match : branche vers le haut */
+
+.connector-second .connector-vertical {
+  top: 0;
+  height: 50%;
+}
+
+/* Parcours des vainqueurs */
+
+.connector-horizontal.active,
+.connector-vertical.active {
+  background: var(--winner-color);
+}
+
+.connector-horizontal.active {
+  height: 3px;
+}
+
+.connector-vertical.active {
+  width: 3px;
+}
+
+/* LISTE DES MATCHS */
+
+.tours {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.tour-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.matchs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.match {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.92);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.equipe {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background: #1e293b;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
 .equipe--winner {
   border: 1px solid rgba(34, 197, 94, 0.6);
   background: rgba(34, 197, 94, 0.16);
@@ -457,70 +681,24 @@ onMounted(async () => {
 }
 
 .vs {
+  display: block;
+  padding: 0 0.5rem;
   color: var(--muted);
   font-style: italic;
   font-weight: 400;
 }
 
-.team.loser {
-  opacity: 0.45;
-}
-
-.team.winner {
-  border-left-color: var(--accent);
-  background: linear-gradient(90deg, rgba(34, 211, 238, 0.2), transparent);
-}
-
-.check {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-/* Traits de liaison entre les tours */
-.round:not(:last-child) .match::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  width: calc(var(--gap) / 2);
-  border-top: 2px solid var(--border);
-}
-
-.round:not(:first-child) .match::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  width: calc(var(--gap) / 2);
-  border-top: 2px solid var(--border);
-}
-
-.round:not(:last-child) .slot::after {
-  content: "";
-  position: absolute;
-  right: calc(var(--gap) / -2);
-  border-right: 2px solid var(--border);
-}
-
-.round:not(:last-child) .slot:nth-child(odd)::after {
-  top: 50%;
-  bottom: 0;
-}
-
-.round:not(:last-child) .slot:nth-child(even)::after {
-  top: 0;
-  bottom: 50%;
-}
-
 .winner-label {
-  margin: 0.25rem 0 0;
+  margin: 0.25rem 0.75rem;
   font-size: 0.8rem;
   color: #86efac;
   font-weight: 600;
 }
 
+/* BOUTONS */
+
 .btn-valider {
-  margin-top: 0.25rem;
+  margin: 0.5rem 0.75rem;
   padding: 0.45rem 0.75rem;
   border: 0;
   border-radius: 8px;
@@ -536,7 +714,7 @@ onMounted(async () => {
 }
 
 .match-error {
-  margin: 0;
+  margin: 0 0.75rem 0.5rem;
   font-size: 0.8rem;
   color: #f87171;
 }
